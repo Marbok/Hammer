@@ -1,0 +1,18 @@
+{
+  "imports": [
+    "one",
+    "two"
+  ],
+  "beans": [
+    {
+      "class": "ru.marbok.sleep.NewClass",
+      "name": "water",
+      "constructor": [
+        {
+          "name": "volume",
+          "value": 5
+        }
+      ]
+    }
+  ]
+}
