@@ -33,8 +33,11 @@ public class JsonContext implements Context {
             path = pathsContext.poll();
             try {
                 parse = new JsonProcessor(path).parse(JsonFileDefinition.class);
-                pathsContext.addAll(parse.getImports());
-                parse.getBeans().forEach(bean -> beanInfos.put(bean.getBeanName(), BeanInfo.map(bean)));
+                if (CollectionsUtil.isNonEmpty(parse.getImports()))
+                    pathsContext.addAll(parse.getImports());
+                if (CollectionsUtil.isNonEmpty(parse.getBeans()))
+                    // TODO check double beans and throw exception
+                    parse.getBeans().forEach(bean -> beanInfos.put(bean.getBeanName(), BeanInfo.map(bean)));
             } catch (IOException e) {
                 throw new ContextException("Error in file: " + path, e);
             }

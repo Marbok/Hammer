@@ -1,0 +1,17 @@
+{
+  "imports": [
+    "src/test/resources/json_context_test/imports/3level_1.json"
+  ],
+  "beans": [
+    {
+      "class": "java.lang.String",
+      "name": "2level_2",
+      "constructor": [
+        {
+          "name": "volume",
+          "value": 5
+        }
+      ]
+    }
+  ]
+}

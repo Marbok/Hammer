@@ -1,0 +1,14 @@
+{
+  "beans": [
+    {
+      "class": "java.lang.String",
+      "name": "3level",
+      "constructor": [
+        {
+          "name": "volume",
+          "value": 5
+        }
+      ]
+    }
+  ]
+}
