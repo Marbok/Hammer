@@ -14,8 +14,8 @@ public class BeanMeta {
     private String beanName;
 
     @JsonProperty("constructor")
-    private List<ConstructorMeta> constructor;
+    private List<InjectMeta> constructor;
 
     @JsonProperty("setters")
-    private List<SetterMeta> setters;
+    private List<InjectMeta> setters;
 }

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ConstructorMeta {
+public class InjectMeta {
     @JsonProperty("name")
-    private String nameAttr;
+    private String name;
 
     @JsonProperty("value")
     private Object value;

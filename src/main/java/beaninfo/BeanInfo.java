@@ -2,9 +2,9 @@ package beaninfo;
 
 import lombok.Data;
 import metadata.json.BeanMeta;
-import metadata.json.ConstructorMeta;
-import metadata.json.SetterMeta;
+import metadata.json.InjectMeta;
 import util.CollectionsUtil;
+import util.StringUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -20,9 +20,9 @@ public class BeanInfo {
     private Map<String, InjectParam> constructorParam;
     private Map<String, InjectParam> setterParam;
 
-    public BeanInfo setConstructorParam(List<ConstructorMeta> meta) {
+    public BeanInfo setConstructorParam(List<InjectMeta> meta) {
         if (CollectionsUtil.isNonEmpty(meta)) {
-            this.setConstructorParam(meta.stream().collect(toMap(ConstructorMeta::getNameAttr, InjectParam::new)));
+            this.setConstructorParam(injectMetasToInjectParams(meta));
         }
         return this;
     }
@@ -32,11 +32,19 @@ public class BeanInfo {
         return this;
     }
 
-    public BeanInfo setSetterParam(List<SetterMeta> meta) {
+    public BeanInfo setSetterParam(List<InjectMeta> meta) {
         if (CollectionsUtil.isNonEmpty(meta)) {
-            this.setSetterParam(meta.stream().collect(toMap(SetterMeta::getName, InjectParam::new)));
+            this.setSetterParam(injectMetasToInjectParams(meta));
         }
         return this;
+    }
+
+    private Map<String, InjectParam> injectMetasToInjectParams(List<InjectMeta> injectMetas) {
+        return injectMetas.stream()
+                .collect(toMap(InjectMeta::getName,
+                        injectMeta -> StringUtil.isEmpty(injectMeta.getRef()) ?
+                                new InjectParam(injectMeta.getValue())
+                                : new InjectParam(injectMeta.getRef())));
     }
 
     public BeanInfo setSetterParam(Map<String, InjectParam> setterParam) {
