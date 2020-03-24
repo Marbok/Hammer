@@ -36,8 +36,12 @@ public class JsonContext implements Context {
                 if (CollectionsUtil.isNonEmpty(parse.getImports()))
                     pathsContext.addAll(parse.getImports());
                 if (CollectionsUtil.isNonEmpty(parse.getBeans()))
-                    // TODO check double beans and throw exception
-                    parse.getBeans().forEach(bean -> beanInfos.put(bean.getBeanName(), BeanInfo.map(bean)));
+                    parse.getBeans().forEach(bean -> {
+                        if (beanInfos.get(bean.getBeanName()) == null)
+                            beanInfos.put(bean.getBeanName(), BeanInfo.map(bean));
+                        else
+                            throw new ContextException("Bean " + bean.getBeanName() + " in initialized twice");
+                    });
             } catch (IOException e) {
                 throw new ContextException("Error in file: " + path, e);
             }

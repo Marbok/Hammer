@@ -1,0 +1,27 @@
+{
+  "imports": [
+    "src/test/resources/json_context_test/imports/double2.json"
+  ],
+  "beans": [
+    {
+      "class": "java.lang.String",
+      "name": "root",
+      "constructor": [
+        {
+          "name": "volume",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "class": "java.lang.String",
+      "name": "double2",
+      "constructor": [
+        {
+          "name": "volume",
+          "value": 5
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "beans": [
+    {
+      "class": "java.lang.String",
+      "name": "double2",
+      "constructor": [
+        {
+          "name": "volume",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "class": "java.lang.String",
+      "name": "hi",
+      "constructor": [
+        {
+          "name": "volume",
+          "value": 5
+        }
+      ]
+    }
+  ]
+}

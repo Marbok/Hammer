@@ -1,6 +1,7 @@
 package context;
 
 import beaninfo.BeanInfo;
+import exceptions.ContextException;
 import metadata.json.InjectMeta;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JsonContextTest {
+
+    @Test
+    void getBeanInfo_doubleInitialize() {
+        assertThrows(ContextException.class, () -> new JsonContext("src/test/resources/json_context_test/double/double.json"));
+    }
+
 
     @Test
     void getBeanInfo() {
