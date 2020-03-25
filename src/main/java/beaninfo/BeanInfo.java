@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toMap;
 @Data
 public class BeanInfo {
     private String name;
-    private Class clazz;
+    private Class<?> clazz;
     private Scope scope = SINGLETON;
     private Map<String, InjectParam> constructorParam;
     private Map<String, InjectParam> setterParam;

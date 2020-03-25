@@ -18,4 +18,12 @@ public class InjectParam {
     public InjectParam(Object val) {
         this.val = val;
     }
+
+    public boolean isValue() {
+        return val != null;
+    }
+
+    public boolean isRef() {
+        return ref != null;
+    }
 }

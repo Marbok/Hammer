@@ -18,14 +18,14 @@ public class JsonProcessor {
     public <T> T parse(Class<T> clazz) throws IOException {
         assert fileName != null;
 
-        var json = readJson(fileName);
+        String json = readJson(fileName);
 
-        var mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, clazz);
     }
 
     private String readJson(String fileName) throws IOException {
-        var buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder();
         Files.lines(Paths.get(fileName), StandardCharsets.UTF_8).forEach(buffer::append);
         return buffer.toString();
 

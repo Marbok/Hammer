@@ -8,10 +8,7 @@ import util.JsonProcessor;
 import util.StringUtil;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class JsonContext implements Context {
 
@@ -21,7 +18,7 @@ public class JsonContext implements Context {
         if (StringUtil.isEmpty(filePath))
             throw new NullPointerException("filePath equals null or empty");
 
-        var pathsContext = new LinkedList<String>();
+        Queue<String> pathsContext = new LinkedList<>();
         pathsContext.add(filePath);
         fillBeanInfos(pathsContext);
     }
@@ -57,4 +54,8 @@ public class JsonContext implements Context {
         return beanInfo;
     }
 
+    @Override
+    public Collection<BeanInfo> getAllBeanInfo() {
+        return beanInfos.values();
+    }
 }
