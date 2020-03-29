@@ -67,7 +67,7 @@ public class BeanFactory {
         List<AbstractInjectParam> constructorParams = beanInfo.getConstructorParam();
         Class<?>[] array = new Class[constructorParams.size()];
         for (int i = 0, n = array.length; i < n; i++) {
-            array[i] = constructorParams.get(0).getClazz();
+            array[i] = constructorParams.get(i).getClazz();
         }
 
         try {

@@ -1,0 +1,28 @@
+{
+  "beans": [
+    {
+      "class": "testHelpers.Square",
+      "name": "square",
+      "constructor": [
+        {
+          "type": "double",
+          "value": "5"
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.Circle",
+      "name": "circle",
+      "constructor": [
+        {
+          "type": "int",
+          "value": "20"
+        },
+        {
+          "type": "boolean",
+          "value": "true"
+        }
+      ]
+    }
+  ]
+}

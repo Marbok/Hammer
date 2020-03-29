@@ -1,0 +1,21 @@
+{
+  "imports": [
+    "src/test/resources/bean_factory_test/figures.json"
+  ],
+  "beans": [
+    {
+      "class": "testHelpers.Screen",
+      "name": "screen",
+      "constructor": [
+        {
+          "type": "testHelpers.Square",
+          "ref": "square"
+        },
+        {
+          "type": "testHelpers.Circle",
+          "ref": "circle"
+        }
+      ]
+    }
+  ]
+}
