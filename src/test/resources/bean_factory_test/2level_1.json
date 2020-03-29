@@ -2,10 +2,10 @@
   "beans": [
     {
       "class": "java.lang.String",
-      "name": "3level",
+      "name": "2level_1",
       "constructor": [
         {
-          "type": "int",
+          "name": "volume",
           "value": "5"
         }
       ]

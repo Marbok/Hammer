@@ -9,8 +9,8 @@
       "name": "water",
       "constructor": [
         {
-          "name": "volume",
-          "value": 5
+          "type": "char",
+          "value": "c"
         }
       ]
     }

@@ -4,8 +4,8 @@ import metadata.json.BeanMeta;
 import metadata.json.InjectMeta;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,30 +17,29 @@ class BeanInfoTest {
                 .setBeanName("string")
                 .setClassName("java.lang.String")
                 .setConstructor(Arrays.asList(
-                        new InjectMeta().setName("one").setValue(5),
-                        new InjectMeta().setName("two").setRef("builder")
+                        new InjectMeta().setType("int").setValue("5"),
+                        new InjectMeta().setType("java.lang.String").setRef("builder")
                 ))
                 .setSetters(Arrays.asList(
-                        new InjectMeta().setName("three").setRef("buffer"),
-                        new InjectMeta().setName("four").setValue(6.5)
+                        new InjectMeta().setType("java.math.BigDecimal").setRef("buffer"),
+                        new InjectMeta().setType("double").setValue("6.5")
                 ));
 
         var actual = BeanInfo.map(beanMeta);
 
-        var constructor = new HashMap<String, InjectParam>();
-        constructor.put("one", new InjectParam(5));
-        constructor.put("two", new InjectParam("builder"));
+        var constructorExp = Arrays.asList(
+                new InjectPrimitive(int.class, "5"),
+                new InjectReference(String.class, "builder")
+        );
 
-        var setters = new HashMap<String, InjectParam>();
-        setters.put("three", new InjectParam("buffer"));
-        setters.put("four", new InjectParam(6.5));
+        var settersExp = Arrays.asList(
+                new InjectReference(BigDecimal.class, "buffer"),
+                new InjectPrimitive(double.class, "6.5")
+        );
 
-        var expected = new BeanInfo()
-                .setName("string")
-                .setClazz(String.class)
-                .setConstructorParam(constructor)
-                .setSetterParam(setters);
-
-        assertEquals(expected, actual);
+        assertEquals("string", actual.getName());
+        assertEquals(String.class, actual.getClazz());
+        assertEquals(constructorExp, actual.getConstructorParam());
+        assertEquals(settersExp, actual.getSetterParam());
     }
 }

@@ -2,11 +2,11 @@
   "beans": [
     {
       "class": "java.lang.String",
-      "name": "3level",
+      "name": "root",
       "constructor": [
         {
-          "type": "int",
-          "value": "5"
+          "type": "java.lang.String",
+          "value": "test"
         }
       ]
     }

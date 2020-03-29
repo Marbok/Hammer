@@ -3,9 +3,9 @@ package context;
 import beaninfo.BeanInfo;
 import exceptions.ContextException;
 import metadata.json.JsonFileDefinition;
+import org.apache.commons.lang3.StringUtils;
 import util.CollectionsUtil;
 import util.JsonProcessor;
-import util.StringUtil;
 
 import java.io.IOException;
 import java.util.*;
@@ -15,7 +15,7 @@ public class JsonContext implements Context {
     private Map<String, BeanInfo> beanInfos = new HashMap<>();
 
     public JsonContext(String filePath) {
-        if (StringUtil.isEmpty(filePath))
+        if (StringUtils.isEmpty(filePath))
             throw new NullPointerException("filePath equals null or empty");
 
         Queue<String> pathsContext = new LinkedList<>();

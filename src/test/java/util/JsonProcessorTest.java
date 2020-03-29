@@ -21,7 +21,7 @@ class JsonProcessorTest {
         var beanMeta = contextDefinition.getBeans().get(0);
         assertEquals("water", beanMeta.getBeanName());
         assertEquals("ru.marbok.sleep.NewClass", beanMeta.getClassName());
-        assertEquals("volume", beanMeta.getConstructor().get(0).getName());
-        assertEquals(5, beanMeta.getConstructor().get(0).getValue());
+        assertEquals("char", beanMeta.getConstructor().get(0).getType());
+        assertEquals("c", beanMeta.getConstructor().get(0).getValue());
     }
 }

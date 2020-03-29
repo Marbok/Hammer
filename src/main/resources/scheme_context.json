@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Context validator",
+  "description": "Context validator",
+  "type": "object",
+  "properties": {
+    "import": {
+      "description": "Imports from another file",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "minItems": 0
+    },
+    "beans": {
+      "description": "bean initialization",
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "properties": {
+          "@class": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "constructor": {
+            "$ref": "#/definitions/inject"
+          },
+          "setters": {
+            "$ref": "#/definitions/inject"
+          }
+        },
+        "required": [
+          "@class",
+          "name"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "inject": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "ref": {
+            "type": "string"
+          }
+        },
+        "minItems": 1
+      }
+    }
+  }
+}

@@ -1,64 +1,66 @@
 package beaninfo;
 
+import exceptions.BeanInfoException;
 import lombok.Data;
 import metadata.json.BeanMeta;
 import metadata.json.InjectMeta;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import util.CollectionsUtil;
-import util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static beaninfo.Scope.SINGLETON;
-import static java.util.stream.Collectors.toMap;
 
 @Data
 public class BeanInfo {
     private String name;
     private Class<?> clazz;
     private Scope scope = SINGLETON;
-    private Map<String, InjectParam> constructorParam;
-    private Map<String, InjectParam> setterParam;
+    private List<AbstractInjectParam> constructorParam;
+    private List<AbstractInjectParam> setterParam;
 
-    public BeanInfo setConstructorParam(List<InjectMeta> meta) {
+    public BeanInfo setConstructorParam(List<InjectMeta> meta) throws BeanInfoException {
         if (CollectionsUtil.isNonEmpty(meta)) {
-            this.setConstructorParam(injectMetasToInjectParams(meta));
+            this.constructorParam = injectMetasToInjectParams(meta);
         }
         return this;
     }
 
-    public BeanInfo setConstructorParam(Map<String, InjectParam> constructorParam) {
-        this.constructorParam = constructorParam;
-        return this;
-    }
-
-    public BeanInfo setSetterParam(List<InjectMeta> meta) {
+    public BeanInfo setSetterParam(List<InjectMeta> meta) throws BeanInfoException {
         if (CollectionsUtil.isNonEmpty(meta)) {
-            this.setSetterParam(injectMetasToInjectParams(meta));
+            this.setterParam = injectMetasToInjectParams(meta);
         }
         return this;
     }
 
-    private Map<String, InjectParam> injectMetasToInjectParams(List<InjectMeta> injectMetas) {
-        return injectMetas.stream()
-                .collect(toMap(InjectMeta::getName,
-                        injectMeta -> StringUtil.isEmpty(injectMeta.getRef()) ?
-                                new InjectParam(injectMeta.getValue())
-                                : new InjectParam(injectMeta.getRef())));
-    }
-
-    public BeanInfo setSetterParam(Map<String, InjectParam> setterParam) {
-        this.setterParam = setterParam;
-        return this;
+    private List<AbstractInjectParam> injectMetasToInjectParams(List<InjectMeta> meta) throws BeanInfoException {
+        List<AbstractInjectParam> injectParams = new ArrayList<>();
+        for (var injectMeta : meta) {
+            try {
+                Class<?> injectClass = ClassUtils.getClass(injectMeta.getType());
+                if (StringUtils.isEmpty(injectMeta.getRef())) {
+                    injectParams.add(new InjectPrimitive(injectClass, injectMeta.getValue()));
+                } else {
+                    injectParams.add(new InjectReference(injectClass, injectMeta.getRef()));
+                }
+            } catch (ClassNotFoundException e) {
+                throw new BeanInfoException("Not correct type: " + injectMeta.getType(), e);
+            }
+        }
+        return injectParams;
     }
 
     public static BeanInfo map(BeanMeta beanMeta) {
         try {
             return new BeanInfo()
                     .setName(beanMeta.getBeanName())
-                    .setClazz(Class.forName(beanMeta.getClassName()))
+                    .setClazz(ClassUtils.getClass(beanMeta.getClassName()))
                     .setConstructorParam(beanMeta.getConstructor())
                     .setSetterParam(beanMeta.getSetters());
+        } catch (BeanInfoException e) {
+            throw new IllegalStateException("Not correct type in bean: " + beanMeta.getBeanName(), e);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Not correct class: " + beanMeta.getClassName() + ", in bean: " + beanMeta.getBeanName(), e);
         }

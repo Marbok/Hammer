@@ -9,8 +9,8 @@
       "name": "root",
       "constructor": [
         {
-          "name": "volume",
-          "value": 5
+          "type": "int",
+          "value": "5"
         }
       ]
     }

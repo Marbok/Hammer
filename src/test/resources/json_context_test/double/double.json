@@ -8,8 +8,8 @@
       "name": "root",
       "constructor": [
         {
-          "name": "volume",
-          "value": 5
+          "type": "int",
+          "value": "5"
         }
       ]
     },
@@ -18,8 +18,8 @@
       "name": "double2",
       "constructor": [
         {
-          "name": "volume",
-          "value": 5
+          "type": "int",
+          "value": "5"
         }
       ]
     }
