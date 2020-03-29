@@ -1,14 +1,12 @@
 package context;
 
+import beaninfo.AbstractInjectParam;
 import beaninfo.BeanInfo;
-import beaninfo.InjectParam;
 import exceptions.CreateBeanException;
-import util.MapUtil;
+import util.CollectionsUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,53 +35,48 @@ public class BeanFactory {
     private Object createBean(BeanInfo beanInfo) {
         try {
             Constructor<?> actualCons = getActualConstructor(beanInfo);
-            Map<String, InjectParam> constructorParam = beanInfo.getConstructorParam();
-            if (MapUtil.isEmpty(constructorParam)) {
+            List<AbstractInjectParam> constructorParam = beanInfo.getConstructorParam();
+            if (CollectionsUtil.isEmpty(constructorParam)) {
                 return actualCons.newInstance();
             } else {
-                Parameter[] parameters = actualCons.getParameters();
-                List<Object> injectObject = new ArrayList<>(parameters.length);
-                for (var parameter : parameters) {
-                    InjectParam paramInjectInfo = constructorParam.get(parameter.getName());
-                    if (paramInjectInfo.isValue()) {
-                        injectObject.add(paramInjectInfo.getVal());
-                    } else {
-                        String ref = paramInjectInfo.getRef();
-                        Object bean = container.get(ref);
-                        if (bean == null) {
-                            bean = initBean(context.getBeanInfo(ref));
-                        }
-                        injectObject.add(bean);
-                    }
-                }
-                return actualCons.newInstance(injectObject);
+                Object[] constructorParametersValues = beanInfo.getConstructorParam().stream()
+                        .map(param -> {
+                            if (param.isReference()) {
+                                String ref = (String) param.getValue();
+                                Object o = container.get(ref);
+                                if (o == null) {
+                                    o = createBean(context.getBeanInfo(ref));
+                                }
+                                return o;
+                            } else {
+                                return param.getValue();
+                            }
+                        }).toArray();
+                return actualCons.newInstance(constructorParametersValues);
             }
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new CreateBeanException("Can't create bean: " + beanInfo.getName(), e);
         }
     }
 
     private Constructor<?> getActualConstructor(BeanInfo beanInfo) {
-        if (MapUtil.isEmpty(beanInfo.getConstructorParam())) {
+        if (CollectionsUtil.isEmpty(beanInfo.getConstructorParam())) {
             return getDefaultConstructor(beanInfo);
         }
 
-        Map<String, InjectParam> constructorParam = beanInfo.getConstructorParam();
-        Constructor<?>[] constructors = beanInfo.getClazz().getConstructors();
-
-        for (var cons : constructors) {
-            Parameter[] parameters = cons.getParameters();
-            if (constructorParam.size() == parameters.length) {
-                for (var parameter : parameters) {
-                    if (!constructorParam.containsKey(parameter.getName())) {
-                        break;
-                    }
-                }
-                return cons;
-            }
+        List<AbstractInjectParam> constructorParams = beanInfo.getConstructorParam();
+        Class<?>[] array = new Class[constructorParams.size()];
+        for (int i = 0, n = array.length; i < n; i++) {
+            array[i] = constructorParams.get(0).getClazz();
         }
-        throw new CreateBeanException("Wrong arguments for constructor in bean: " + beanInfo.getName());
+
+        try {
+            return beanInfo.getClazz().getConstructor(array);
+        } catch (NoSuchMethodException e) {
+            throw new CreateBeanException("Wrong arguments for constructor in bean: " + beanInfo.getName());
+        }
     }
+
 
     private Constructor<?> getDefaultConstructor(BeanInfo beanInfo) {
         try {

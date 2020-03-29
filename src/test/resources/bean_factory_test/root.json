@@ -1,12 +1,12 @@
 {
   "beans": [
     {
-      "class": "java.lang.String",
+      "class": "java.lang.Integer",
       "name": "root",
       "constructor": [
         {
-          "type": "java.lang.String",
-          "value": "test"
+          "type": "int",
+          "value": "5"
         }
       ]
     }
