@@ -8,10 +8,13 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public abstract class AbstractInjectParam {
-    private Class<?> clazz;
 
-    public AbstractInjectParam(Class<?> clazz) {
+    private Class<?> clazz;
+    private String name;
+
+    public AbstractInjectParam(Class<?> clazz, String name) {
         this.clazz = clazz;
+        this.name = name;
     }
 
     public abstract Object getValue();

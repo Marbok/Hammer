@@ -12,6 +12,13 @@
           "type": "char",
           "value": "c"
         }
+      ],
+      "setters": [
+        {
+          "type": "int",
+          "name": "count",
+          "value": "5"
+        }
       ]
     }
   ]

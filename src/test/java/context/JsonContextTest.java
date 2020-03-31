@@ -32,7 +32,7 @@ class JsonContextTest {
         return new BeanInfo()
                 .setName(name)
                 .setClazz(String.class)
-                .setConstructorParam(Collections.singletonList(
+                .setConstructorParams(Collections.singletonList(
                         new InjectMeta().setType("int").setValue("5")));
     }
 }

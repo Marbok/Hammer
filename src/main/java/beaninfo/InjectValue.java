@@ -3,14 +3,18 @@ package beaninfo;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @ToString
-public class InjectPrimitive extends AbstractInjectParam {
+public class InjectValue extends AbstractInjectParam {
 
     private Object value;
 
-    public InjectPrimitive(Class<?> clazz, String value) {
-        super(clazz);
+    public InjectValue(Class<?> clazz, String value) {
+        this(clazz, null, value);
+    }
+
+    public InjectValue(Class<?> clazz, String name, String value) {
+        super(clazz, name);
         this.value = getPrimitiveValue(value, clazz);
     }
 

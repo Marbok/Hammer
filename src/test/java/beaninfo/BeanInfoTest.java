@@ -28,18 +28,18 @@ class BeanInfoTest {
         var actual = BeanInfo.map(beanMeta);
 
         var constructorExp = Arrays.asList(
-                new InjectPrimitive(int.class, "5"),
+                new InjectValue(int.class, "5"),
                 new InjectReference(String.class, "builder")
         );
 
         var settersExp = Arrays.asList(
                 new InjectReference(BigDecimal.class, "buffer"),
-                new InjectPrimitive(double.class, "6.5")
+                new InjectValue(double.class, "6.5")
         );
 
         assertEquals("string", actual.getName());
         assertEquals(String.class, actual.getClazz());
-        assertEquals(constructorExp, actual.getConstructorParam());
-        assertEquals(settersExp, actual.getSetterParam());
+        assertEquals(constructorExp, actual.getConstructorParams());
+        assertEquals(settersExp, actual.getSetterParams());
     }
 }

@@ -3,14 +3,18 @@ package beaninfo;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @ToString
 public class InjectReference extends AbstractInjectParam {
 
     private String reference;
 
     public InjectReference(Class<?> clazz, String reference) {
-        super(clazz);
+        this(clazz, null, reference);
+    }
+
+    public InjectReference(Class<?> clazz, String name, String reference) {
+        super(clazz, name);
         this.reference = reference;
     }
 

@@ -22,6 +22,27 @@
           "type": "boolean",
           "value": "true"
         }
+      ],
+      "setters": [
+        {
+          "type": "testHelpers.Circle",
+          "name": "innerCircle",
+          "ref": "innerCircle"
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.Circle",
+      "name": "innerCircle",
+      "constructor": [
+        {
+          "type": "int",
+          "value": "5"
+        },
+        {
+          "type": "boolean",
+          "value": "false"
+        }
       ]
     }
   ]

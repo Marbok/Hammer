@@ -18,19 +18,19 @@ public class BeanInfo {
     private String name;
     private Class<?> clazz;
     private Scope scope = SINGLETON;
-    private List<AbstractInjectParam> constructorParam;
-    private List<AbstractInjectParam> setterParam;
+    private List<AbstractInjectParam> constructorParams;
+    private List<AbstractInjectParam> setterParams;
 
-    public BeanInfo setConstructorParam(List<InjectMeta> meta) throws BeanInfoException {
+    public BeanInfo setConstructorParams(List<InjectMeta> meta) throws BeanInfoException {
         if (CollectionsUtil.isNonEmpty(meta)) {
-            this.constructorParam = injectMetasToInjectParams(meta);
+            this.constructorParams = injectMetasToInjectParams(meta);
         }
         return this;
     }
 
-    public BeanInfo setSetterParam(List<InjectMeta> meta) throws BeanInfoException {
+    public BeanInfo setSetterParams(List<InjectMeta> meta) throws BeanInfoException {
         if (CollectionsUtil.isNonEmpty(meta)) {
-            this.setterParam = injectMetasToInjectParams(meta);
+            this.setterParams = injectMetasToInjectParams(meta);
         }
         return this;
     }
@@ -41,9 +41,9 @@ public class BeanInfo {
             try {
                 Class<?> injectClass = ClassUtils.getClass(injectMeta.getType());
                 if (StringUtils.isEmpty(injectMeta.getRef())) {
-                    injectParams.add(new InjectPrimitive(injectClass, injectMeta.getValue()));
+                    injectParams.add(new InjectValue(injectClass, injectMeta.getName(), injectMeta.getValue()));
                 } else {
-                    injectParams.add(new InjectReference(injectClass, injectMeta.getRef()));
+                    injectParams.add(new InjectReference(injectClass, injectMeta.getName(), injectMeta.getRef()));
                 }
             } catch (ClassNotFoundException e) {
                 throw new BeanInfoException("Not correct type: " + injectMeta.getType(), e);
@@ -57,8 +57,8 @@ public class BeanInfo {
             return new BeanInfo()
                     .setName(beanMeta.getBeanName())
                     .setClazz(ClassUtils.getClass(beanMeta.getClassName()))
-                    .setConstructorParam(beanMeta.getConstructor())
-                    .setSetterParam(beanMeta.getSetters());
+                    .setConstructorParams(beanMeta.getConstructor())
+                    .setSetterParams(beanMeta.getSetters());
         } catch (BeanInfoException e) {
             throw new IllegalStateException("Not correct type in bean: " + beanMeta.getBeanName(), e);
         } catch (ClassNotFoundException e) {

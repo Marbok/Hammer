@@ -15,6 +15,7 @@ class BeanFactoryTest {
         Screen actual = (Screen) beanFactory.getBean("screen");
 
         Circle circle = new Circle(20, true);
+        circle.setInnerCircle(new Circle(5, false));
         Square square = new Square(5);
         Screen expected = new Screen(square, circle);
 
