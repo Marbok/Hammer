@@ -119,7 +119,7 @@ public class BeanFactory {
     }
 
     public Object getBean(String name) {
-        return container.get(name);
+        return initBean(context.getBeanInfo(name));
     }
 
 }

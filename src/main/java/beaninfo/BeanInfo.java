@@ -57,6 +57,9 @@ public class BeanInfo {
             return new BeanInfo()
                     .setName(beanMeta.getBeanName())
                     .setClazz(ClassUtils.getClass(beanMeta.getClassName()))
+                    .setScope(beanMeta.getScope() == null
+                            ? SINGLETON
+                            : Scope.valueOf(beanMeta.getScope().toUpperCase()))
                     .setConstructorParams(beanMeta.getConstructor())
                     .setSetterParams(beanMeta.getSetters());
         } catch (BeanInfoException e) {

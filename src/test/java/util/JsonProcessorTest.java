@@ -1,27 +1,38 @@
 package util;
 
+import metadata.json.BeanMeta;
+import metadata.json.InjectMeta;
 import metadata.json.JsonFileDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JsonProcessorTest {
 
     @Test
     void parse() throws IOException {
-        var processor = new JsonProcessor("src/test/resources/json_parse_test.json");
+        JsonProcessor processor = new JsonProcessor("src/test/resources/json_parse_test.json");
 
-        var contextDefinition = processor.parse(JsonFileDefinition.class);
+        JsonFileDefinition actual = processor.parse(JsonFileDefinition.class);
 
-        assertTrue(contextDefinition.getImports().contains("one"));
-        assertTrue(contextDefinition.getImports().contains("two"));
-        var beanMeta = contextDefinition.getBeans().get(0);
-        assertEquals("water", beanMeta.getBeanName());
-        assertEquals("ru.marbok.sleep.NewClass", beanMeta.getClassName());
-        assertEquals("char", beanMeta.getConstructor().get(0).getType());
-        assertEquals("c", beanMeta.getConstructor().get(0).getValue());
+        JsonFileDefinition expected = new JsonFileDefinition()
+                .setImports(Arrays.asList("one", "two"))
+                .setBeans(Collections.singletonList(
+                        new BeanMeta().setBeanName("water")
+                                .setClassName("ru.marbok.sleep.NewClass")
+                                .setScope("prototype")
+                                .setConstructor(Collections.singletonList(
+                                        new InjectMeta().setType("char").setValue("c")
+                                ))
+                                .setSetters(Collections.singletonList(
+                                        new InjectMeta().setType("int").setName("count").setValue("5")
+                                ))
+                ));
+
+        assertEquals(expected, actual);
     }
 }
