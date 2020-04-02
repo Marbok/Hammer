@@ -23,7 +23,7 @@ class BeanFactoryTest {
 
         Circle circle = new Circle(20, true);
         circle.setInnerCircle(new Circle(5, false));
-        Square square = new Square(5);
+        Square square = new Square(5).setName("SQUARE");
         Screen expected = new Screen(square, circle);
 
         assertEquals(expected, actual);

@@ -8,6 +8,13 @@
           "type": "double",
           "value": "5"
         }
+      ],
+      "setters": [
+        {
+          "type": "java.lang.String",
+          "name": "name",
+          "value": "SQUARE"
+        }
       ]
     },
     {

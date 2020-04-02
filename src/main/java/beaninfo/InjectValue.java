@@ -15,10 +15,10 @@ public class InjectValue extends AbstractInjectParam {
 
     public InjectValue(Class<?> clazz, String name, String value) {
         super(clazz, name);
-        this.value = getPrimitiveValue(value, clazz);
+        this.value = getInjectValue(value, clazz);
     }
 
-    private Object getPrimitiveValue(String value, Class<?> clazz) {
+    private Object getInjectValue(String value, Class<?> clazz) {
         String name = clazz.getName();
         switch (name) {
             case "byte":
@@ -35,8 +35,10 @@ public class InjectValue extends AbstractInjectParam {
                 return Boolean.valueOf(value);
             case "char":
                 return value.charAt(0);
+            case "java.lang.String":
+                return value;
             default:
-                throw new IllegalStateException("Not Primitive type: " + clazz.getName());
+                throw new IllegalStateException("Can't inject type: " + clazz.getName());
         }
     }
 
