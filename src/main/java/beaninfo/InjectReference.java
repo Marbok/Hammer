@@ -3,9 +3,11 @@ package beaninfo;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.function.Function;
+
 @EqualsAndHashCode
 @ToString
-public class InjectReference extends AbstractInjectSingleReference {
+public class InjectReference extends AbstractInjectParam {
 
     private String reference;
 
@@ -17,5 +19,10 @@ public class InjectReference extends AbstractInjectSingleReference {
     @Override
     public String getValue() {
         return reference;
+    }
+
+    @Override
+    public Object createObjectForInject(Function<String, Object> initBeanByRef) {
+        return initBeanByRef.apply(reference);
     }
 }

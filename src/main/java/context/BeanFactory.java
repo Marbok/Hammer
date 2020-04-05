@@ -6,11 +6,7 @@ import exceptions.CreateBeanException;
 import org.apache.commons.lang3.StringUtils;
 import util.CollectionsUtil;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +23,10 @@ public class BeanFactory {
     public BeanFactory(Context context) {
         this.context = context;
         context.getAllBeanInfo().forEach(this::initBean);
+    }
+
+    public Object initBeanByRef(String ref) {
+        return initBean(context.getBeanInfo(ref));
     }
 
     private Object initBean(BeanInfo beanInfo) {
@@ -53,60 +53,30 @@ public class BeanFactory {
             return;
         }
 
-        for (var setterParam : setterParams) {
+        setterParams.forEach(param -> {
             try {
-                String setterName = PREFIX_SETTER + StringUtils.capitalize(setterParam.getName());
-                Method setter = bean.getClass().getDeclaredMethod(setterName, setterParam.getClazz());
-                if (setterParam.isReference()) {
-                    if (setterParam.isArray()) {
-                        String[] refs = (String[]) setterParam.getValue();
-                        Object injectBeans = Array.newInstance(setterParam.getClazz().getComponentType(), refs.length);
-                        for (int i = 0, n = refs.length; i < n; i++) {
-                            Array.set(injectBeans, i, initBean(context.getBeanInfo(refs[i])));
-                        }
-                        setter.invoke(bean, injectBeans);
-                    } else {
-                        String ref = (String) setterParam.getValue();
-                        setter.invoke(bean, initBean(context.getBeanInfo(ref)));
-                    }
-                } else {
-                    setter.invoke(bean, setterParam.getValue());
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                String setterName = PREFIX_SETTER + StringUtils.capitalize(param.getName());
+                bean.getClass()
+                        .getDeclaredMethod(setterName, param.getClazz())
+                        .invoke(bean, param.createObjectForInject(this::initBeanByRef));
+            } catch (Exception e) {
+                throw new CreateBeanException("Can't inject in setter: " + param.getName() + "in bean: " + beanInfo.getName(), e);
             }
-        }
+        });
 
     }
 
     private Object createBean(BeanInfo beanInfo) {
         try {
             Constructor<?> actualCons = getActualConstructor(beanInfo);
-            List<AbstractInjectParam> constructorParam = beanInfo.getConstructorParams();
-            if (CollectionsUtil.isEmpty(constructorParam)) {
+            List<AbstractInjectParam> constructorParams = beanInfo.getConstructorParams();
+            if (CollectionsUtil.isEmpty(constructorParams)) {
                 return actualCons.newInstance();
             }
-            List<Object> constructorParametersValues = new ArrayList<>();
-            for (AbstractInjectParam param : constructorParam) {
-                if (param.isReference()) {
-                    if (param.isArray()) {
-                        String[] refs = (String[]) param.getValue();
-                        Object injectBeans = Array.newInstance(param.getClazz().getComponentType(), refs.length);
-                        for (int i = 0, n = refs.length; i < n; i++) {
-                            Array.set(injectBeans, i, initBean(context.getBeanInfo(refs[i])));
-                        }
-                        constructorParametersValues.add(injectBeans);
-                    } else {
-                        String ref = (String) param.getValue();
-                        constructorParametersValues.add(initBean(context.getBeanInfo(ref)));
-                    }
-                } else {
-                    constructorParametersValues.add(param.getValue());
-                }
-            }
-            return actualCons.newInstance(constructorParametersValues.toArray());
-        } catch
-        (IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            return actualCons.newInstance(constructorParams.stream()
+                    .map(param -> param.createObjectForInject(this::initBeanByRef))
+                    .toArray());
+        } catch (Exception e) {
             throw new CreateBeanException("Can't create bean: " + beanInfo.getName(), e);
         }
     }
@@ -115,15 +85,12 @@ public class BeanFactory {
         if (CollectionsUtil.isEmpty(beanInfo.getConstructorParams())) {
             return getDefaultConstructor(beanInfo);
         }
-
-        List<AbstractInjectParam> constructorParams = beanInfo.getConstructorParams();
-        Class<?>[] array = new Class[constructorParams.size()];
-        for (int i = 0, n = array.length; i < n; i++) {
-            array[i] = constructorParams.get(i).getClazz();
-        }
-
         try {
-            return beanInfo.getClazz().getConstructor(array);
+            return beanInfo.getClazz().getConstructor(beanInfo
+                    .getConstructorParams()
+                    .stream()
+                    .map(AbstractInjectParam::getClazz)
+                    .toArray(Class[]::new));
         } catch (NoSuchMethodException e) {
             throw new CreateBeanException("Wrong arguments for constructor in bean: " + beanInfo.getName());
         }

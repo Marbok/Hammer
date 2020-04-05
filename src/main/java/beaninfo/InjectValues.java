@@ -1,8 +1,14 @@
 package beaninfo;
 
-import java.lang.reflect.Array;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-public class InjectValues extends AbstractInjectArrayValue {
+import java.lang.reflect.Array;
+import java.util.function.Function;
+
+@EqualsAndHashCode
+@ToString
+public class InjectValues extends AbstractInjectParam implements ValueGenerator {
 
     private Object values;
 
@@ -12,11 +18,15 @@ public class InjectValues extends AbstractInjectArrayValue {
         for (int i = 0, n = values.length; i < n; i++) {
             Array.set(this.values, i, generateValue(clazz.getComponentType(), values[i]));
         }
-//        this.values = clazz.cast(Stream.of(values).map(value -> generateValue(clazz.getComponentType(), value)).toArray());
     }
 
     @Override
     public Object getValue() {
         return values;
+    }
+
+    @Override
+    public Object createObjectForInject(Function<String, Object> initBeanByRef) {
+        return getValue();
     }
 }

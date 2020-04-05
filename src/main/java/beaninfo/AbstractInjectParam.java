@@ -4,10 +4,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.function.Function;
+
 @Getter
 @EqualsAndHashCode
 @ToString
-//TODO kill hierarchy
 public abstract class AbstractInjectParam {
 
     private Class<?> clazz;
@@ -20,7 +21,5 @@ public abstract class AbstractInjectParam {
 
     public abstract Object getValue();
 
-    public abstract boolean isReference();
-
-    public abstract boolean isArray();
+    public abstract Object createObjectForInject(Function<String, Object> initBeanByRef);
 }
