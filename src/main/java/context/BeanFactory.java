@@ -10,10 +10,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static beaninfo.Scope.SINGLETON;
 
@@ -86,22 +86,25 @@ public class BeanFactory {
             if (CollectionsUtil.isEmpty(constructorParam)) {
                 return actualCons.newInstance();
             }
-            Object[] constructorParametersValues = new Object[constructorParam.size()];
-            for (int i = 0, n = constructorParam.size(); i < n; i++) {
-                AbstractInjectParam param = constructorParam.get(i);
+            List<Object> constructorParametersValues = new ArrayList<>();
+            for (AbstractInjectParam param : constructorParam) {
                 if (param.isReference()) {
                     if (param.isArray()) {
                         String[] refs = (String[]) param.getValue();
-                        constructorParametersValues[i] = Stream.of(refs).map(ref -> initBean(context.getBeanInfo(ref))).toArray();
+                        Object injectBeans = Array.newInstance(param.getClazz().getComponentType(), refs.length);
+                        for (int i = 0, n = refs.length; i < n; i++) {
+                            Array.set(injectBeans, i, initBean(context.getBeanInfo(refs[i])));
+                        }
+                        constructorParametersValues.add(injectBeans);
                     } else {
                         String ref = (String) param.getValue();
-                        constructorParametersValues[i] = initBean(context.getBeanInfo(ref));
+                        constructorParametersValues.add(initBean(context.getBeanInfo(ref)));
                     }
                 } else {
-                    constructorParametersValues[i] = param.getValue();
+                    constructorParametersValues.add(param.getValue());
                 }
             }
-            return actualCons.newInstance(constructorParametersValues);
+            return actualCons.newInstance(constructorParametersValues.toArray());
         } catch
         (IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new CreateBeanException("Can't create bean: " + beanInfo.getName(), e);

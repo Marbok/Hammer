@@ -8,6 +8,10 @@ public class Screen {
     private Circle circle;
     private Polyhedron[] polyhedrons;
 
+    public Screen(Polyhedron[] polyhedrons) {
+        this.polyhedrons = polyhedrons;
+    }
+
     public Screen(Square square, Circle circle) {
         this.square = square;
         this.circle = circle;

@@ -26,6 +26,19 @@
           ]
         }
       ]
+    },
+    {
+      "class": "testHelpers.Screen",
+      "name": "polyscreen",
+      "constructor": [
+        {
+          "type": "testHelpers.Polyhedron[]",
+          "refs": [
+            "triangle",
+            "hexagon"
+          ]
+        }
+      ]
     }
   ]
 }
