@@ -1,6 +1,7 @@
 package context;
 
 import beaninfo.BeanInfo;
+import beaninfo.InjectParamFactory;
 import exceptions.ContextException;
 import metadata.json.JsonFileDefinition;
 import org.apache.commons.lang3.StringUtils;
@@ -13,14 +14,20 @@ import java.util.*;
 public class JsonContext implements Context {
 
     private Map<String, BeanInfo> beanInfos = new HashMap<>();
+    private InjectParamFactory injectParamFactory;
 
-    public JsonContext(String filePath) {
+    public JsonContext(String filePath, InjectParamFactory injectParamFactory) {
+        this.injectParamFactory = injectParamFactory;
         if (StringUtils.isEmpty(filePath))
             throw new NullPointerException("filePath equals null or empty");
 
         Queue<String> pathsContext = new LinkedList<>();
         pathsContext.add(filePath);
         fillBeanInfos(pathsContext);
+    }
+
+    public JsonContext(String filePath) {
+        this(filePath, new InjectParamFactory());
     }
 
     private void fillBeanInfos(Queue<String> pathsContext) {
@@ -35,7 +42,7 @@ public class JsonContext implements Context {
                 if (CollectionsUtil.isNonEmpty(parse.getBeans()))
                     parse.getBeans().forEach(bean -> {
                         if (beanInfos.get(bean.getBeanName()) == null)
-                            beanInfos.put(bean.getBeanName(), BeanInfo.map(bean));
+                            beanInfos.put(bean.getBeanName(), new BeanInfo(injectParamFactory).initialize(bean));
                         else
                             throw new ContextException("Bean " + bean.getBeanName() + " in initialized twice");
                     });

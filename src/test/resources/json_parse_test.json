@@ -19,6 +19,15 @@
           "type": "int",
           "name": "count",
           "value": "5"
+        },
+        {
+          "type": "char[]",
+          "name": "string",
+          "values": [
+            "s",
+            "t",
+            "r"
+          ]
         }
       ]
     }

@@ -28,8 +28,10 @@ class JsonProcessorTest {
                                 .setConstructor(Collections.singletonList(
                                         new InjectMeta().setType("char").setValue("c")
                                 ))
-                                .setSetters(Collections.singletonList(
-                                        new InjectMeta().setType("int").setName("count").setValue("5")
+                                .setSetters(Arrays.asList(
+                                        new InjectMeta().setType("int").setName("count").setValue("5"),
+                                        new InjectMeta().setType("char[]").setName("string")
+                                                .setValues(new String[]{"s", "t", "r"})
                                 ))
                 ));
 

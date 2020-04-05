@@ -7,6 +7,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode
 @ToString
+//TODO kill hierarchy
 public abstract class AbstractInjectParam {
 
     private Class<?> clazz;
@@ -20,4 +21,6 @@ public abstract class AbstractInjectParam {
     public abstract Object getValue();
 
     public abstract boolean isReference();
+
+    public abstract boolean isArray();
 }

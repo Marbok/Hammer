@@ -11,9 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BeanInfoTest {
 
+    private InjectParamFactory injectParamFactory = new InjectParamFactory();
+
     @Test
     void map() {
-        var beanMeta = new BeanMeta()
+        BeanMeta beanMeta = new BeanMeta()
                 .setBeanName("string")
                 .setClassName("java.lang.String")
                 .setConstructor(Arrays.asList(
@@ -25,21 +27,20 @@ class BeanInfoTest {
                         new InjectMeta().setType("double").setValue("6.5")
                 ));
 
-        var actual = BeanInfo.map(beanMeta);
+        BeanInfo actual = new BeanInfo(injectParamFactory).initialize(beanMeta);
 
-        var constructorExp = Arrays.asList(
-                new InjectValue(int.class, "5"),
-                new InjectReference(String.class, "builder")
-        );
+        BeanInfo expected = new BeanInfo(injectParamFactory)
+                .setName("string")
+                .setClazz(String.class)
+                .setConstructorParams(Arrays.asList(
+                        new InjectValue(int.class, null, "5"),
+                        new InjectReference(String.class, null, "builder")
+                ))
+                .setSetterParams(Arrays.asList(
+                        new InjectReference(BigDecimal.class, null, "buffer"),
+                        new InjectValue(double.class, null, "6.5")
+                ));
 
-        var settersExp = Arrays.asList(
-                new InjectReference(BigDecimal.class, "buffer"),
-                new InjectValue(double.class, "6.5")
-        );
-
-        assertEquals("string", actual.getName());
-        assertEquals(String.class, actual.getClazz());
-        assertEquals(constructorExp, actual.getConstructorParams());
-        assertEquals(settersExp, actual.getSetterParams());
+        assertEquals(expected, actual);
     }
 }

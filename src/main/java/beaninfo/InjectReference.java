@@ -5,13 +5,9 @@ import lombok.ToString;
 
 @EqualsAndHashCode
 @ToString
-public class InjectReference extends AbstractInjectParam {
+public class InjectReference extends AbstractInjectSingleReference {
 
     private String reference;
-
-    public InjectReference(Class<?> clazz, String reference) {
-        this(clazz, null, reference);
-    }
 
     public InjectReference(Class<?> clazz, String name, String reference) {
         super(clazz, name);
@@ -21,10 +17,5 @@ public class InjectReference extends AbstractInjectParam {
     @Override
     public String getValue() {
         return reference;
-    }
-
-    @Override
-    public boolean isReference() {
-        return true;
     }
 }

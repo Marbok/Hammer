@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Context validator",
-  "description": "Context validator",
+  "description": "Context validator  NOT COMPLETE",
   "type": "object",
   "properties": {
     "import": {

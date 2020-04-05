@@ -6,12 +6,14 @@ import exceptions.CreateBeanException;
 import org.apache.commons.lang3.StringUtils;
 import util.CollectionsUtil;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static beaninfo.Scope.SINGLETON;
 
@@ -56,8 +58,17 @@ public class BeanFactory {
                 String setterName = PREFIX_SETTER + StringUtils.capitalize(setterParam.getName());
                 Method setter = bean.getClass().getDeclaredMethod(setterName, setterParam.getClazz());
                 if (setterParam.isReference()) {
-                    String ref = (String) setterParam.getValue();
-                    setter.invoke(bean, initBean(context.getBeanInfo(ref)));
+                    if (setterParam.isArray()) {
+                        String[] refs = (String[]) setterParam.getValue();
+                        Object injectBeans = Array.newInstance(setterParam.getClazz().getComponentType(), refs.length);
+                        for (int i = 0, n = refs.length; i < n; i++) {
+                            Array.set(injectBeans, i, initBean(context.getBeanInfo(refs[i])));
+                        }
+                        setter.invoke(bean, injectBeans);
+                    } else {
+                        String ref = (String) setterParam.getValue();
+                        setter.invoke(bean, initBean(context.getBeanInfo(ref)));
+                    }
                 } else {
                     setter.invoke(bean, setterParam.getValue());
                 }
@@ -79,14 +90,20 @@ public class BeanFactory {
             for (int i = 0, n = constructorParam.size(); i < n; i++) {
                 AbstractInjectParam param = constructorParam.get(i);
                 if (param.isReference()) {
-                    String ref = (String) param.getValue();
-                    constructorParametersValues[i] = initBean(context.getBeanInfo(ref));
+                    if (param.isArray()) {
+                        String[] refs = (String[]) param.getValue();
+                        constructorParametersValues[i] = Stream.of(refs).map(ref -> initBean(context.getBeanInfo(ref))).toArray();
+                    } else {
+                        String ref = (String) param.getValue();
+                        constructorParametersValues[i] = initBean(context.getBeanInfo(ref));
+                    }
                 } else {
                     constructorParametersValues[i] = param.getValue();
                 }
             }
             return actualCons.newInstance(constructorParametersValues);
-        } catch (IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch
+        (IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new CreateBeanException("Can't create bean: " + beanInfo.getName(), e);
         }
     }
