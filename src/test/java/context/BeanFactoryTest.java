@@ -2,11 +2,9 @@ package context;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import testHelpers.Circle;
-import testHelpers.Polyhedron;
-import testHelpers.Screen;
-import testHelpers.Square;
+import testHelpers.*;
 
+import static beaninfo.Scope.PROTOTYPE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BeanFactoryTest {
@@ -33,6 +31,10 @@ class BeanFactoryTest {
         expected.setPolyhedrons(new Polyhedron[]{triangle, hexagon});
 
         assertEquals(expected, actual);
+
+        Triangle strangeTriangle = (Triangle) beanFactory.getBean("strangeTriangle");
+        Triangle expectedStrangeTriangle = new Triangle().setName("Cool figure!").setScope(PROTOTYPE);
+        assertEquals(expectedStrangeTriangle, strangeTriangle);
     }
 
     @Test

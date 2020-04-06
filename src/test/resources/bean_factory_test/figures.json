@@ -86,12 +86,17 @@
     },
     {
       "class": "testHelpers.Triangle",
-      "name": "triangleWithSetter",
+      "name": "strangeTriangle",
       "setters": [
         {
           "type": "java.lang.String",
           "name": "name",
           "value": "Cool figure!"
+        },
+        {
+          "type": "beaninfo.Scope",
+          "name": "scope",
+          "value": "PROTOTYPE"
         }
       ]
     }

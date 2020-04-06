@@ -1,5 +1,7 @@
 package beaninfo;
 
+import lombok.SneakyThrows;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -21,7 +23,12 @@ public interface ValueGenerator {
         return valuesGenerator;
     }
 
+    @SneakyThrows
     default Object generateValue(Class<?> clazz, String value) {
+        if (clazz.isEnum()) {
+            return clazz.getDeclaredMethod("valueOf", String.class).invoke(clazz, value);
+        }
+
         Function<String, Object> generateFunction = VALUES_GENERATOR.get(clazz);
         if (generateFunction == null) {
             throw new UnsupportedOperationException("Can't inject type: " + clazz.getName());
