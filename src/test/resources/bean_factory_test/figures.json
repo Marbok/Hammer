@@ -83,6 +83,17 @@
           ]
         }
       ]
+    },
+    {
+      "class": "testHelpers.Triangle",
+      "name": "triangleWithSetter",
+      "setters": [
+        {
+          "type": "java.lang.String",
+          "name": "name",
+          "value": "Cool figure!"
+        }
+      ]
     }
   ]
 }
