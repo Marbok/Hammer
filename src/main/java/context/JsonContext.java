@@ -1,7 +1,6 @@
 package context;
 
 import beaninfo.BeanInfo;
-import beaninfo.InjectParamFactory;
 import exceptions.ContextException;
 import metadata.json.JsonFileDefinition;
 import org.apache.commons.lang3.StringUtils;
@@ -14,10 +13,8 @@ import java.util.*;
 public class JsonContext implements Context {
 
     private Map<String, BeanInfo> beanInfos = new HashMap<>();
-    private InjectParamFactory injectParamFactory;
 
-    public JsonContext(String filePath, InjectParamFactory injectParamFactory) {
-        this.injectParamFactory = injectParamFactory;
+    public JsonContext(String filePath) {
         if (StringUtils.isEmpty(filePath))
             throw new NullPointerException("filePath equals null or empty");
 
@@ -26,26 +23,21 @@ public class JsonContext implements Context {
         fillBeanInfos(pathsContext);
     }
 
-    public JsonContext(String filePath) {
-        this(filePath, new InjectParamFactory());
-    }
-
     private void fillBeanInfos(Queue<String> pathsContext) {
-        JsonFileDefinition parse;
-        String path;
         while (CollectionsUtil.isNonEmpty(pathsContext)) {
-            path = pathsContext.poll();
+            String path = pathsContext.poll();
             try {
-                parse = new JsonProcessor(path).parse(JsonFileDefinition.class);
-                if (CollectionsUtil.isNonEmpty(parse.getImports()))
+                JsonFileDefinition parse = new JsonProcessor(path).parse(JsonFileDefinition.class);
+                if (CollectionsUtil.isNonEmpty(parse.getImports())) {
                     pathsContext.addAll(parse.getImports());
-                if (CollectionsUtil.isNonEmpty(parse.getBeans()))
+                }
+                if (CollectionsUtil.isNonEmpty(parse.getBeans())) {
                     parse.getBeans().forEach(bean -> {
-                        if (beanInfos.get(bean.getBeanName()) == null)
-                            beanInfos.put(bean.getBeanName(), new BeanInfo(injectParamFactory).initialize(bean));
-                        else
+                        if (beanInfos.get(bean.getBeanName()) != null)
                             throw new ContextException("Bean " + bean.getBeanName() + " in initialized twice");
+                        beanInfos.put(bean.getBeanName(), new BeanInfo(bean));
                     });
+                }
             } catch (IOException e) {
                 throw new ContextException("Error in file: " + path, e);
             }

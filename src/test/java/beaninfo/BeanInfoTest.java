@@ -11,8 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BeanInfoTest {
 
-    private InjectParamFactory injectParamFactory = new InjectParamFactory();
-
     @Test
     void map() {
         BeanMeta beanMeta = new BeanMeta()
@@ -27,9 +25,9 @@ class BeanInfoTest {
                         new InjectMeta().setType("double").setValue("6.5")
                 ));
 
-        BeanInfo actual = new BeanInfo(injectParamFactory).initialize(beanMeta);
+        BeanInfo actual = new BeanInfo(beanMeta);
 
-        BeanInfo expected = new BeanInfo(injectParamFactory)
+        BeanInfo expected = new BeanInfo()
                 .setName("string")
                 .setClazz(String.class)
                 .setConstructorParams(Arrays.asList(

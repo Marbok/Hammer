@@ -25,10 +25,6 @@ public class BeanFactory {
         context.getAllBeanInfo().forEach(this::initBean);
     }
 
-    public Object initBeanByRef(String ref) {
-        return initBean(context.getBeanInfo(ref));
-    }
-
     private Object initBean(BeanInfo beanInfo) {
         Object o = container.get(beanInfo.getName());
         if (o != null) {
@@ -58,7 +54,7 @@ public class BeanFactory {
                 String setterName = PREFIX_SETTER + StringUtils.capitalize(param.getName());
                 bean.getClass()
                         .getDeclaredMethod(setterName, param.getClazz())
-                        .invoke(bean, param.createObjectForInject(this::initBeanByRef));
+                        .invoke(bean, param.createObjectForInject(s -> initBean(context.getBeanInfo(s))));
             } catch (Exception e) {
                 throw new CreateBeanException("Can't inject in setter: " + param.getName() + "in bean: " + beanInfo.getName(), e);
             }
@@ -74,7 +70,7 @@ public class BeanFactory {
                 return actualCons.newInstance();
             }
             return actualCons.newInstance(constructorParams.stream()
-                    .map(param -> param.createObjectForInject(this::initBeanByRef))
+                    .map(param -> param.createObjectForInject(s -> initBean(context.getBeanInfo(s))))
                     .toArray());
         } catch (Exception e) {
             throw new CreateBeanException("Can't create bean: " + beanInfo.getName(), e);

@@ -12,14 +12,12 @@ public class JsonProcessor {
     private String fileName;
 
     public JsonProcessor(String fileName) {
+        if (fileName == null) throw new IllegalArgumentException("File's name can't be null");
         this.fileName = fileName;
     }
 
     public <T> T parse(Class<T> clazz) throws IOException {
-        assert fileName != null;
-
         String json = readJson(fileName);
-
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, clazz);
     }
@@ -28,6 +26,5 @@ public class JsonProcessor {
         StringBuilder buffer = new StringBuilder();
         Files.lines(Paths.get(fileName), StandardCharsets.UTF_8).forEach(buffer::append);
         return buffer.toString();
-
     }
 }

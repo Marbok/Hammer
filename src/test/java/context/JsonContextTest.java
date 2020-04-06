@@ -1,7 +1,6 @@
 package context;
 
 import beaninfo.BeanInfo;
-import beaninfo.InjectParamFactory;
 import beaninfo.InjectValue;
 import exceptions.ContextException;
 import org.junit.jupiter.api.Test;
@@ -14,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JsonContextTest {
 
-    private InjectParamFactory injectParamFactory = new InjectParamFactory();
-
     @Test
     void getBeanInfo_doubleInitialize() {
         assertThrows(ContextException.class, () -> new JsonContext("src/test/resources/json_context_test/double/double.json"));
@@ -24,7 +21,7 @@ class JsonContextTest {
 
     @Test
     void getBeanInfo() {
-        var jsonContext = new JsonContext("src/test/resources/json_context_test/imports/root.json", injectParamFactory);
+        var jsonContext = new JsonContext("src/test/resources/json_context_test/imports/root.json");
         assertEquals(getBean("root"), jsonContext.getBeanInfo("root"));
         assertEquals(getBean("2level_1"), jsonContext.getBeanInfo("2level_1"));
         assertEquals(getBean("2level_2"), jsonContext.getBeanInfo("2level_2"));
@@ -32,7 +29,7 @@ class JsonContextTest {
     }
 
     private BeanInfo getBean(String name) {
-        return new BeanInfo(injectParamFactory)
+        return new BeanInfo()
                 .setName(name)
                 .setClazz(String.class)
                 .setConstructorParams(Collections.singletonList(
