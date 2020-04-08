@@ -1,0 +1,73 @@
+{
+  "beans": [
+    {
+      "class": "testHelpers.Lake",
+      "name": "lake",
+      "constructor": [
+        {
+          "type": "java.util.List",
+          "value-type": "int",
+          "values": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "type": "java.util.List",
+          "value-type": "testHelpers.Fish",
+          "refs": [
+            "map",
+            "refsSet",
+            "charsSet"
+          ]
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.Fish",
+      "name": "map",
+      "setters": [
+        {
+          "type": "java.util.Map",
+          "key-type": "java.lang.String",
+          "value-type": "testHelpers.Circle",
+          "map": {
+            "one": "circle",
+            "two": "innerCircle"
+          }
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.Fish",
+      "name": "refsSet",
+      "setters": [
+        {
+          "type": "java.util.Set",
+          "value-type": "testHelpers.Polyhedron",
+          "refs": [
+            "triangle",
+            "hexagon"
+          ]
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.Fish",
+      "name": "charsSet",
+      "setters": [
+        {
+          "type": "java.util.Set",
+          "value-type": "char",
+          "values": [
+            "c",
+            "h",
+            "a",
+            "r"
+          ]
+        }
+      ]
+    }
+  ]
+}

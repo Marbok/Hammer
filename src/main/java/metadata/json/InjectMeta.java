@@ -1,7 +1,8 @@
 package metadata.json;
 
-import beaninfo.*;
+import beaninfo.inject_param.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +10,13 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+import java.util.Map;
+
 import static lombok.AccessLevel.NONE;
 
 @Data
+// TODO kill setters, if jackson let
 public class InjectMeta {
     private String value;
     private String[] values;
@@ -19,6 +24,11 @@ public class InjectMeta {
     private String[] refs;
     private String type;
     private String name;
+    @JsonProperty("value-type")
+    private String valueType;
+    @JsonProperty("key-type")
+    private String keyType;
+    private Map<String, String> map;
 
     @JsonIgnore
     @Setter(NONE)
@@ -27,7 +37,18 @@ public class InjectMeta {
 
     public AbstractInjectParam createInjectParam() throws ClassNotFoundException {
         injectClass = ClassUtils.getClass(type);
+        if (List.class.equals(injectClass)) {
+            return getInjectList();
+        }
         return injectClass.isArray() ? getInjectArray() : getInjectParam();
+    }
+
+    private AbstractInjectParam getInjectList() throws ClassNotFoundException {
+        if (valueType == null || !ObjectUtils.anyNotNull(refs, values))
+            throw new IllegalStateException("Not list: " + name);
+        Class<?> subClass = ClassUtils.getClass(valueType);
+        return refs != null ? new InjectListReferences(injectClass, name, subClass, refs) : new InjectListValues(injectClass, name, subClass, values);
+
     }
 
     private AbstractInjectParam getInjectParam() {

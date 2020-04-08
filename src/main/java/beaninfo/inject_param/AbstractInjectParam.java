@@ -1,4 +1,4 @@
-package beaninfo;
+package beaninfo.inject_param;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,15 +11,13 @@ import java.util.function.Function;
 @ToString
 public abstract class AbstractInjectParam {
 
-    private Class<?> clazz;
-    private String name;
+    protected Class<?> clazz;
+    protected String name;
 
     public AbstractInjectParam(Class<?> clazz, String name) {
         this.clazz = clazz;
         this.name = name;
     }
-
-    public abstract Object getValue();
 
     public abstract Object createObjectForInject(Function<String, Object> initBeanByRef);
 }

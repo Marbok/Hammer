@@ -1,0 +1,27 @@
+{
+  "beans": [
+    {
+      "class": "testHelpers.Lake",
+      "name": "lake",
+      "constructor": [
+        {
+          "type": "java.util.List",
+          "value-type": "int",
+          "values": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "type": "java.util.List",
+          "value-type": "testHelpers.Circle",
+          "refs": [
+            "circle",
+            "innerCircle"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,13 +1,19 @@
 package context;
 
 import beaninfo.BeanInfo;
-import beaninfo.InjectValue;
+import beaninfo.inject_param.InjectListReferences;
+import beaninfo.inject_param.InjectListValues;
+import beaninfo.inject_param.InjectValue;
 import exceptions.ContextException;
 import org.junit.jupiter.api.Test;
+import testHelpers.Circle;
+import testHelpers.Lake;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -21,7 +27,7 @@ class JsonContextTest {
 
     @Test
     void getBeanInfo() {
-        var jsonContext = new JsonContext("src/test/resources/json_context_test/imports/root.json");
+        JsonContext jsonContext = new JsonContext("src/test/resources/json_context_test/imports/root.json");
         assertEquals(getBean("root"), jsonContext.getBeanInfo("root"));
         assertEquals(getBean("2level_1"), jsonContext.getBeanInfo("2level_1"));
         assertEquals(getBean("2level_2"), jsonContext.getBeanInfo("2level_2"));
@@ -35,5 +41,20 @@ class JsonContextTest {
                 .setConstructorParams(Collections.singletonList(
                         new InjectValue(int.class, null, "5")))
                 .setSetterParams(new ArrayList<>());
+    }
+
+    @Test
+    void testContextForListMapSet() {
+        JsonContext jsonContext = new JsonContext("src/test/resources/bean_factory_test/screen.json");
+        BeanInfo actual = jsonContext.getBeanInfo("lake");
+
+        BeanInfo expected = new BeanInfo()
+                .setName("lake")
+                .setClazz(Lake.class)
+                .setConstructorParams(asList(new InjectListValues(List.class, null, int.class, new String[]{"1", "2", "3"}),
+                        new InjectListReferences(List.class, null, Circle.class, new String[]{"circle", "innerCircle"})))
+                .setSetterParams(new ArrayList<>());
+
+        assertEquals(expected, actual);
     }
 }

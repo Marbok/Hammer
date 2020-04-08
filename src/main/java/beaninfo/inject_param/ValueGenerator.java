@@ -1,4 +1,4 @@
-package beaninfo;
+package beaninfo.inject_param;
 
 import lombok.SneakyThrows;
 

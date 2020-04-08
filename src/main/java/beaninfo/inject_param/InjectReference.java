@@ -1,4 +1,4 @@
-package beaninfo;
+package beaninfo.inject_param;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,11 +14,6 @@ public class InjectReference extends AbstractInjectParam {
     public InjectReference(Class<?> clazz, String name, String reference) {
         super(clazz, name);
         this.reference = reference;
-    }
-
-    @Override
-    public String getValue() {
-        return reference;
     }
 
     @Override

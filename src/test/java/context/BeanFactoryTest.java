@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import testHelpers.*;
 
 import static beaninfo.Scope.PROTOTYPE;
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO refactor - mock JsonContext or use it like "system test"
 class BeanFactoryTest {
 
     BeanFactory beanFactory;
@@ -21,7 +23,8 @@ class BeanFactoryTest {
         Screen actual = (Screen) beanFactory.getBean("screen");
 
         Circle circle = new Circle(20, true);
-        circle.setInnerCircle(new Circle(5, false));
+        Circle innerCircle = new Circle(5, false);
+        circle.setInnerCircle(innerCircle);
 
         Square square = new Square(5).setName("SQUARE");
         Polyhedron triangle = new Polyhedron(new int[]{1, 2, 3});
@@ -35,6 +38,10 @@ class BeanFactoryTest {
         Triangle strangeTriangle = (Triangle) beanFactory.getBean("strangeTriangle");
         Triangle expectedStrangeTriangle = new Triangle().setName("Cool figure!").setScope(PROTOTYPE);
         assertEquals(expectedStrangeTriangle, strangeTriangle);
+
+        Lake actualLake = (Lake) beanFactory.getBean("lake");
+        Lake expectedLake = new Lake(asList(1, 2, 3), asList(circle, innerCircle));
+        assertEquals(expectedLake, actualLake);
     }
 
     @Test

@@ -1,7 +1,7 @@
 package context;
 
-import beaninfo.AbstractInjectParam;
 import beaninfo.BeanInfo;
+import beaninfo.inject_param.AbstractInjectParam;
 import exceptions.CreateBeanException;
 import org.apache.commons.lang3.StringUtils;
 import util.CollectionsUtil;
@@ -22,6 +22,8 @@ public class BeanFactory {
 
     public BeanFactory(Context context) {
         this.context = context;
+        container.put("applicationContext", context);
+        container.put("beanFactory", this);
         context.getAllBeanInfo().forEach(this::initBean);
     }
 
@@ -101,6 +103,7 @@ public class BeanFactory {
         }
     }
 
+    // TODO while this method is used for test, may be need kill it after develop
     public Object getBean(String name) {
         return initBean(context.getBeanInfo(name));
     }

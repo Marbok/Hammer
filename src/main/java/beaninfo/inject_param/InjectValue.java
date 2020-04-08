@@ -1,4 +1,4 @@
-package beaninfo;
+package beaninfo.inject_param;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -17,13 +17,8 @@ public class InjectValue extends AbstractInjectParam implements ValueGenerator {
     }
 
     @Override
-    public Object getValue() {
-        return value;
-    }
-
-    @Override
     public Object createObjectForInject(Function<String, Object> initBeanByRef) {
-        return getValue();
+        return value;
     }
 
 }

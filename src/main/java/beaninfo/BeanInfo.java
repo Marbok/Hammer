@@ -1,5 +1,6 @@
 package beaninfo;
 
+import beaninfo.inject_param.AbstractInjectParam;
 import exceptions.BeanInfoException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
