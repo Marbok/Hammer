@@ -3,6 +3,7 @@ package context;
 import beaninfo.BeanInfo;
 import beaninfo.inject_param.AbstractInjectParam;
 import exceptions.CreateBeanException;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import util.CollectionsUtil;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 
 import static beaninfo.Scope.SINGLETON;
 
+@Log4j2
 public class BeanFactory {
 
     public static final String PREFIX_SETTER = "set";
@@ -33,6 +35,7 @@ public class BeanFactory {
             return o;
         }
 
+        log.debug("Start to create bean: " + beanInfo.getName());
         o = createBean(beanInfo);
 
         infectParamBySetters(o, beanInfo);
@@ -41,6 +44,7 @@ public class BeanFactory {
             container.put(beanInfo.getName(), o);
         }
 
+        log.debug("Created bean: " + beanInfo.getName());
         return o;
     }
 
