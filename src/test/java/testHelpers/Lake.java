@@ -9,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class Lake {
     List<Integer> numbers;
-    List<Circle> circles;
+    List<Fish> fish;
 }

@@ -38,10 +38,26 @@ public class InjectMeta {
 
     public AbstractInjectParam createInjectParam() throws ClassNotFoundException {
         injectClass = ClassUtils.getClass(type);
-        if (injectClass.equals(List.class) || asList(injectClass.getInterfaces()).contains(List.class)) {
+        if (haveInterface(injectClass, List.class)) {
             return getInjectList();
+        } else if (haveInterface(injectClass, Map.class)) {
+            return getInjectMap();
+        } else if (injectClass.isArray()) {
+            return getInjectArray();
         }
-        return injectClass.isArray() ? getInjectArray() : getInjectParam();
+        return getInjectParam();
+    }
+
+    private boolean haveInterface(Class<?> clazz, Class<?> checkInterface) {
+        return clazz.equals(checkInterface) || asList(clazz.getInterfaces()).contains(checkInterface);
+    }
+
+    private AbstractInjectParam getInjectMap() throws ClassNotFoundException {
+        if (!ObjectUtils.allNotNull(valueType, keyType, map))
+            throw new IllegalStateException("Not map: " + name);
+        Class<?> keyClass = ClassUtils.getClass(keyType);
+        Class<?> valueClass = ClassUtils.getClass(valueType);
+        return new InjectMapValues(injectClass, name, keyClass, valueClass, map);
     }
 
     private AbstractInjectParam getInjectList() throws ClassNotFoundException {
@@ -49,7 +65,6 @@ public class InjectMeta {
             throw new IllegalStateException("Not list: " + name);
         Class<?> subClass = ClassUtils.getClass(valueType);
         return refs != null ? new InjectListReferences(injectClass, name, subClass, refs) : new InjectListValues(injectClass, name, subClass, values);
-
     }
 
     private AbstractInjectParam getInjectParam() {

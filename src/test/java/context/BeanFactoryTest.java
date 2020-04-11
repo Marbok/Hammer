@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import testHelpers.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static beaninfo.Scope.PROTOTYPE;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +43,11 @@ class BeanFactoryTest {
         assertEquals(expectedStrangeTriangle, strangeTriangle);
 
         Lake actualLake = (Lake) beanFactory.getBean("lake");
-        Lake expectedLake = new Lake(asList(1, 2, 3), asList(circle, innerCircle));
+        Map<String, Integer> paramForFish = new HashMap<>();
+        paramForFish.put("one", 1);
+        paramForFish.put("two", 2);
+        Fish map = new Fish().setMap(paramForFish);
+        Lake expectedLake = new Lake(asList(1, 2, 3), asList(map));
         assertEquals(expectedLake, actualLake);
     }
 

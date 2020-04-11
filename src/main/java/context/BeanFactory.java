@@ -62,7 +62,7 @@ public class BeanFactory {
                         .getDeclaredMethod(setterName, param.getClazz())
                         .invoke(bean, param.createObjectForInject(s -> initBean(context.getBeanInfo(s))));
             } catch (Exception e) {
-                throw new CreateBeanException("Can't inject in setter: " + param.getName() + "in bean: " + beanInfo.getName(), e);
+                throw new CreateBeanException("Can't inject in setter: " + param.getName() + " in bean: " + beanInfo.getName(), e);
             }
         });
 

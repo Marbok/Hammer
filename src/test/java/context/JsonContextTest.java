@@ -6,7 +6,7 @@ import beaninfo.inject_param.InjectListValues;
 import beaninfo.inject_param.InjectValue;
 import exceptions.ContextException;
 import org.junit.jupiter.api.Test;
-import testHelpers.Circle;
+import testHelpers.Fish;
 import testHelpers.Lake;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ class JsonContextTest {
                 .setName("lake")
                 .setClazz(Lake.class)
                 .setConstructorParams(asList(new InjectListValues(List.class, null, int.class, new String[]{"1", "2", "3"}),
-                        new InjectListReferences(List.class, null, Circle.class, new String[]{"circle", "innerCircle"})))
+                        new InjectListReferences(List.class, null, Fish.class, new String[]{"map"})))
                 .setSetterParams(new ArrayList<>());
 
         assertEquals(expected, actual);

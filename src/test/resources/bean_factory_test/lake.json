@@ -15,11 +15,26 @@
         },
         {
           "type": "java.util.List",
-          "value-type": "testHelpers.Circle",
+          "value-type": "testHelpers.Fish",
           "refs": [
-            "circle",
-            "innerCircle"
+            "map"
           ]
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.Fish",
+      "name": "map",
+      "setters": [
+        {
+          "type": "java.util.Map",
+          "name": "map",
+          "key-type": "java.lang.String",
+          "value-type": "java.lang.Integer",
+          "map": {
+            "one": "1",
+            "two": "2"
+          }
         }
       ]
     }

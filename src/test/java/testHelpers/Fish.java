@@ -9,7 +9,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 public class Fish {
-    Map<String, Circle> map;
+    Map<String, Integer> map;
     Set<Polyhedron> refsSet;
     Set<Character> charsSet;
 }
