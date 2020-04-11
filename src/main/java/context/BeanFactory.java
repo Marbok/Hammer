@@ -1,5 +1,6 @@
 package context;
 
+import annotations.InitMethod;
 import beaninfo.BeanInfo;
 import beaninfo.inject_param.AbstractInjectParam;
 import exceptions.CreateBeanException;
@@ -37,15 +38,29 @@ public class BeanFactory {
 
         log.debug("Start to create bean: " + beanInfo.getName());
         o = createBean(beanInfo);
-
         infectParamBySetters(o, beanInfo);
+        log.debug("Created bean: " + beanInfo.getName());
+
+        invokeInitMethod(o);
 
         if (SINGLETON.equals(beanInfo.getScope())) {
             container.put(beanInfo.getName(), o);
         }
 
-        log.debug("Created bean: " + beanInfo.getName());
         return o;
+    }
+
+    private void invokeInitMethod(Object o) {
+        try {
+            for (var method : o.getClass().getMethods()) {
+                if (method.isAnnotationPresent(InitMethod.class)) {
+                    log.info("Invoke init-method in bean");
+                    method.invoke(o);
+                }
+            }
+        } catch (Exception e) {
+            throw new CreateBeanException("Can't invoke init-method", e);
+        }
     }
 
     private void infectParamBySetters(Object bean, BeanInfo beanInfo) {

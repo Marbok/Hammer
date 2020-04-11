@@ -1,6 +1,5 @@
 package context;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import testHelpers.*;
 
@@ -16,15 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 // TODO refactor - mock JsonContext or use it like "system test"
 class BeanFactoryTest {
 
-    BeanFactory beanFactory;
-
-    @BeforeEach
-    void setUp() {
-        beanFactory = new BeanFactory(new JsonContext("src/test/resources/bean_factory_test/screen.json"));
-    }
-
     @Test
     void getBean() {
+        BeanFactory beanFactory = new BeanFactory(new JsonContext("src/test/resources/bean_factory_test/screen.json"));
         Screen actual = (Screen) beanFactory.getBean("screen");
 
         Circle circle = new Circle(20, true);
@@ -65,6 +58,7 @@ class BeanFactoryTest {
 
     @Test
     void testScope() {
+        BeanFactory beanFactory = new BeanFactory(new JsonContext("src/test/resources/bean_factory_test/screen.json"));
         Square square1 = (Square) beanFactory.getBean("square");
         Square square2 = (Square) beanFactory.getBean("square");
         assertSame(square1, square2);
@@ -72,5 +66,15 @@ class BeanFactoryTest {
         Circle Circle1 = (Circle) beanFactory.getBean("innerCircle");
         Circle Circle2 = (Circle) beanFactory.getBean("innerCircle");
         assertNotSame(Circle1, Circle2);
+    }
+
+    @Test
+    void testInitMethod() {
+        BeanFactory beanFactory = new BeanFactory(new JsonContext("src/test/resources/bean_factory_test/initMethod.json"));
+        InitMethodTest actual = (InitMethodTest) beanFactory.getBean("initMethodTest");
+
+        InitMethodTest expected = new InitMethodTest(5).setFactor(10).setScore(50);
+
+        assertEquals(expected, actual);
     }
 }
