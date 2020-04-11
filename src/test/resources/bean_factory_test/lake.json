@@ -17,7 +17,9 @@
           "type": "java.util.List",
           "value-type": "testHelpers.Fish",
           "refs": [
-            "map"
+            "map",
+            "refsSet",
+            "charsSet"
           ]
         }
       ]
@@ -35,6 +37,38 @@
             "one": "1",
             "two": "2"
           }
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.Fish",
+      "name": "refsSet",
+      "setters": [
+        {
+          "type": "java.util.Set",
+          "name": "refsSet",
+          "value-type": "testHelpers.Polyhedron",
+          "refs": [
+            "triangle",
+            "hexagon"
+          ]
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.Fish",
+      "name": "charsSet",
+      "setters": [
+        {
+          "type": "java.util.Set",
+          "name": "charsSet",
+          "value-type": "char",
+          "values": [
+            "c",
+            "h",
+            "a",
+            "r"
+          ]
         }
       ]
     }

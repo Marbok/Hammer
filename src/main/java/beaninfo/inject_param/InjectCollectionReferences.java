@@ -1,20 +1,20 @@
 package beaninfo.inject_param;
 
+import beaninfo.inject_param.generators.CollectionGenerator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Function;
 
 @EqualsAndHashCode
 @ToString
-public class InjectListReferences extends AbstractInjectParam {
+public class InjectCollectionReferences extends AbstractInjectParam implements CollectionGenerator {
 
     private final String[] references;
     private final Class<?> subClass;
 
-    public InjectListReferences(Class<?> injectClass, String name, Class<?> subClass, String[] references) {
+    public InjectCollectionReferences(Class<?> injectClass, String name, Class<?> subClass, String[] references) {
         super(injectClass, name);
         this.references = references;
         this.subClass = subClass;
@@ -24,11 +24,11 @@ public class InjectListReferences extends AbstractInjectParam {
     @Override
     public Object createObjectForInject(Function<String, Object> initBeanByRef) {
 
-        List<Object> injectBeans;
+        Collection<Object> injectBeans;
         try {
-            injectBeans = clazz.equals(List.class) ? new ArrayList<>() : (List<Object>) clazz.getConstructor().newInstance();
+            injectBeans = generateCollection(clazz);
         } catch (Exception e) {
-            throw new IllegalStateException("Bean isn't a list: " + name);
+            throw new IllegalStateException("Bean isn't a collection: " + name);
         }
 
         for (var reference : references) {

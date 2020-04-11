@@ -10,7 +10,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -38,8 +38,8 @@ public class InjectMeta {
 
     public AbstractInjectParam createInjectParam() throws ClassNotFoundException {
         injectClass = ClassUtils.getClass(type);
-        if (haveInterface(injectClass, List.class)) {
-            return getInjectList();
+        if (haveInterface(injectClass, Collection.class)) {
+            return getInjectCollection();
         } else if (haveInterface(injectClass, Map.class)) {
             return getInjectMap();
         } else if (injectClass.isArray()) {
@@ -60,11 +60,11 @@ public class InjectMeta {
         return new InjectMapValues(injectClass, name, keyClass, valueClass, map);
     }
 
-    private AbstractInjectParam getInjectList() throws ClassNotFoundException {
+    private AbstractInjectParam getInjectCollection() throws ClassNotFoundException {
         if (valueType == null || !ObjectUtils.anyNotNull(refs, values))
             throw new IllegalStateException("Not list: " + name);
         Class<?> subClass = ClassUtils.getClass(valueType);
-        return refs != null ? new InjectListReferences(injectClass, name, subClass, refs) : new InjectListValues(injectClass, name, subClass, values);
+        return refs != null ? new InjectCollectionReferences(injectClass, name, subClass, refs) : new InjectCollectionValues(injectClass, name, subClass, values);
     }
 
     private AbstractInjectParam getInjectParam() {

@@ -1,8 +1,8 @@
 package context;
 
 import beaninfo.BeanInfo;
-import beaninfo.inject_param.InjectListReferences;
-import beaninfo.inject_param.InjectListValues;
+import beaninfo.inject_param.InjectCollectionReferences;
+import beaninfo.inject_param.InjectCollectionValues;
 import beaninfo.inject_param.InjectValue;
 import exceptions.ContextException;
 import org.junit.jupiter.api.Test;
@@ -51,8 +51,8 @@ class JsonContextTest {
         BeanInfo expected = new BeanInfo()
                 .setName("lake")
                 .setClazz(Lake.class)
-                .setConstructorParams(asList(new InjectListValues(List.class, null, int.class, new String[]{"1", "2", "3"}),
-                        new InjectListReferences(List.class, null, Fish.class, new String[]{"map"})))
+                .setConstructorParams(asList(new InjectCollectionValues(List.class, null, int.class, new String[]{"1", "2", "3"}),
+                        new InjectCollectionReferences(List.class, null, Fish.class, new String[]{"map", "refsSet", "charsSet"})))
                 .setSetterParams(new ArrayList<>());
 
         assertEquals(expected, actual);

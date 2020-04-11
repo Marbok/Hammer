@@ -1,5 +1,6 @@
 package beaninfo.inject_param;
 
+import beaninfo.inject_param.generators.ValueGenerator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 

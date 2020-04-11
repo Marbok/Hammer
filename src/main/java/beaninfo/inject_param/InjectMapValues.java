@@ -1,5 +1,7 @@
 package beaninfo.inject_param;
 
+import beaninfo.inject_param.generators.ValueGenerator;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;

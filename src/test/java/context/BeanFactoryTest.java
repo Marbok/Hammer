@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import testHelpers.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static beaninfo.Scope.PROTOTYPE;
 import static java.util.Arrays.asList;
@@ -43,11 +45,21 @@ class BeanFactoryTest {
         assertEquals(expectedStrangeTriangle, strangeTriangle);
 
         Lake actualLake = (Lake) beanFactory.getBean("lake");
-        Map<String, Integer> paramForFish = new HashMap<>();
-        paramForFish.put("one", 1);
-        paramForFish.put("two", 2);
-        Fish map = new Fish().setMap(paramForFish);
-        Lake expectedLake = new Lake(asList(1, 2, 3), asList(map));
+        Map<String, Integer> mapForFish = new HashMap<>();
+        mapForFish.put("one", 1);
+        mapForFish.put("two", 2);
+        Fish map = new Fish().setMap(mapForFish);
+        Set<Polyhedron> setRefsForFish = new HashSet<>();
+        setRefsForFish.add(triangle);
+        setRefsForFish.add(hexagon);
+        Fish refsSet = new Fish().setRefsSet(setRefsForFish);
+        Set<Character> setCharsForFish = new HashSet<>();
+        setCharsForFish.add('c');
+        setCharsForFish.add('h');
+        setCharsForFish.add('a');
+        setCharsForFish.add('r');
+        Fish charSet = new Fish().setCharsSet(setCharsForFish);
+        Lake expectedLake = new Lake(asList(1, 2, 3), asList(map, refsSet, charSet));
         assertEquals(expectedLake, actualLake);
     }
 
