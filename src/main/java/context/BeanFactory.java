@@ -19,8 +19,8 @@ public class BeanFactory {
 
     public static final String PREFIX_SETTER = "set";
 
-    private Context context;
-    private Map<String, Object> container = new HashMap<>();
+    private final Context context;
+    private final Map<String, Object> container = new HashMap<>();
 
     public BeanFactory(Context context) {
         this.context = context;
@@ -75,9 +75,12 @@ public class BeanFactory {
             if (CollectionsUtil.isEmpty(constructorParams)) {
                 return actualCons.newInstance();
             }
-            return actualCons.newInstance(constructorParams.stream()
+
+            Object[] parameters = constructorParams.stream()
                     .map(param -> param.createObjectForInject(s -> initBean(context.getBeanInfo(s))))
-                    .toArray());
+                    .toArray();
+
+            return actualCons.newInstance(parameters);
         } catch (Exception e) {
             throw new CreateBeanException("Can't create bean: " + beanInfo.getName(), e);
         }
@@ -88,11 +91,12 @@ public class BeanFactory {
             return getDefaultConstructor(beanInfo);
         }
         try {
-            return beanInfo.getClazz().getConstructor(beanInfo
+            Class<?>[] parameterTypes = beanInfo
                     .getConstructorParams()
                     .stream()
                     .map(AbstractInjectParam::getClazz)
-                    .toArray(Class[]::new));
+                    .toArray(Class<?>[]::new);
+            return beanInfo.getClazz().getConstructor(parameterTypes);
         } catch (NoSuchMethodException e) {
             throw new CreateBeanException("Wrong arguments for constructor in bean: " + beanInfo.getName());
         }

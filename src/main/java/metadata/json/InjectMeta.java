@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static lombok.AccessLevel.NONE;
 
 @Data
@@ -37,7 +38,7 @@ public class InjectMeta {
 
     public AbstractInjectParam createInjectParam() throws ClassNotFoundException {
         injectClass = ClassUtils.getClass(type);
-        if (List.class.equals(injectClass)) {
+        if (injectClass.equals(List.class) || asList(injectClass.getInterfaces()).contains(List.class)) {
             return getInjectList();
         }
         return injectClass.isArray() ? getInjectArray() : getInjectParam();
