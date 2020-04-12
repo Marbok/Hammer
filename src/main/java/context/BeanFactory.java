@@ -9,11 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 import util.CollectionsUtil;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static beaninfo.Scope.SINGLETON;
+import static java.util.Arrays.asList;
 
 @Log4j2
 public class BeanFactory {
@@ -22,12 +24,31 @@ public class BeanFactory {
 
     private final Context context;
     private final Map<String, Object> container = new HashMap<>();
+    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     public BeanFactory(Context context) {
         this.context = context;
         container.put("applicationContext", context);
         container.put("beanFactory", this);
-        context.getAllBeanInfo().forEach(this::initBean);
+
+        context.getAllBeanInfo()
+                .stream()
+                .filter(this::isBeanPostProcessor)
+                .forEach(this::initBeanPostProcessor);
+
+        context.getAllBeanInfo()
+                .stream()
+                .filter(this::isNotBeanPostProcessor)
+                .forEach(this::initBean);
+    }
+
+
+    private void initBeanPostProcessor(BeanInfo beanInfo) {
+        log.debug("Start to create BeanPostProcessor: " + beanInfo.getName() + ", " + beanInfo.getClazz());
+        BeanPostProcessor o = (BeanPostProcessor) createBean(beanInfo);
+        infectParamBySetters(o, beanInfo);
+        log.debug("Created BeanPostProcessor: " + beanInfo.getName() + ", " + beanInfo.getClazz());
+        beanPostProcessors.add(o);
     }
 
     private Object initBean(BeanInfo beanInfo) {
@@ -41,7 +62,9 @@ public class BeanFactory {
         infectParamBySetters(o, beanInfo);
         log.debug("Created bean: " + beanInfo.getName());
 
+        beforeInitializationMethodInvoke(o, beanInfo.getName());
         invokeInitMethod(o);
+        afterInitializationMethodInvoke(o, beanInfo.getName());
 
         if (SINGLETON.equals(beanInfo.getScope())) {
             container.put(beanInfo.getName(), o);
@@ -49,6 +72,13 @@ public class BeanFactory {
 
         return o;
     }
+
+    private void beforeInitializationMethodInvoke(Object bean, String name) {
+        for (var beanPostProcessor : beanPostProcessors) {
+            bean = beanPostProcessor.beforeInitialization(bean, name);
+        }
+    }
+
 
     private void invokeInitMethod(Object o) {
         try {
@@ -60,6 +90,12 @@ public class BeanFactory {
             }
         } catch (Exception e) {
             throw new CreateBeanException("Can't invoke init-method", e);
+        }
+    }
+
+    private void afterInitializationMethodInvoke(Object bean, String name) {
+        for (var beanPostProcessor : beanPostProcessors) {
+            bean = beanPostProcessor.afterInitialization(bean, name);
         }
     }
 
@@ -124,6 +160,14 @@ public class BeanFactory {
         } catch (NoSuchMethodException e) {
             throw new CreateBeanException("Need parameters or constructor without arguments for bean: " + beanInfo.getName(), e);
         }
+    }
+
+    private boolean isBeanPostProcessor(BeanInfo beanInfo) {
+        return asList(beanInfo.getClazz().getInterfaces()).contains(BeanPostProcessor.class);
+    }
+
+    private boolean isNotBeanPostProcessor(BeanInfo beanInfo) {
+        return !isBeanPostProcessor(beanInfo);
     }
 
     // TODO while this method is used for test, may be need kill it after develop

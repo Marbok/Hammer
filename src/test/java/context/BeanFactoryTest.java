@@ -73,8 +73,18 @@ class BeanFactoryTest {
         BeanFactory beanFactory = new BeanFactory(new JsonContext("src/test/resources/bean_factory_test/initMethod.json"));
         InitMethodTest actual = (InitMethodTest) beanFactory.getBean("initMethodTest");
 
-        InitMethodTest expected = new InitMethodTest(5).setFactor(10).setScore(50);
+        InitMethodTest expected = new InitMethodTest(5)
+                .setFactor(10)
+                .setScore(50)
+                .setBeforeScore(50)
+                .setAfterScore(75);
 
         assertEquals(expected, actual);
     }
+
+//    @Test
+//    void testBeanPostProcessor() {
+//        BeanFactory beanFactory = new BeanFactory(new JsonContext("src/test/resources/bean_factory_test/initMethod.json"));
+//
+//    }
 }
