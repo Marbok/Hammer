@@ -48,7 +48,7 @@ public class BeanInfo {
             try {
                 injectParams.add(injectMeta.createInjectParam());
             } catch (ClassNotFoundException e) {
-                throw new BeanInfoException("Not correct type: " + injectMeta.getType(), e);
+                throw new BeanInfoException("Not correct type injection", e);
             }
         }
         return injectParams;

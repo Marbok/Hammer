@@ -17,7 +17,6 @@ import static java.util.Arrays.asList;
 import static lombok.AccessLevel.NONE;
 
 @Data
-// TODO kill setters, if jackson let
 public class InjectMeta {
     private String value;
     private String[] values;
