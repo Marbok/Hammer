@@ -12,7 +12,6 @@ import static beaninfo.Scope.PROTOTYPE;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO refactor - mock JsonContext or use it like "system test"
 class BeanFactoryTest {
 
     @Test

@@ -170,7 +170,6 @@ public class BeanFactory {
         return !isBeanPostProcessor(beanInfo);
     }
 
-    // TODO while this method is used for test, may be need kill it after develop
     public Object getBean(String name) {
         return initBean(context.getBeanInfo(name));
     }
