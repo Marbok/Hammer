@@ -13,8 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
 import static lombok.AccessLevel.NONE;
+import static util.ClassUtil.haveInterface;
 
 @Data
 public class InjectMeta {
@@ -45,10 +45,6 @@ public class InjectMeta {
             return getInjectArray();
         }
         return getInjectParam();
-    }
-
-    private boolean haveInterface(Class<?> clazz, Class<?> checkInterface) {
-        return clazz.equals(checkInterface) || asList(clazz.getInterfaces()).contains(checkInterface);
     }
 
     private AbstractInjectParam getInjectMap() throws ClassNotFoundException {
