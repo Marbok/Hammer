@@ -44,10 +44,7 @@ public class BeanFactory {
 
 
     private void initBeanPostProcessor(BeanInfo beanInfo) {
-        log.debug("Start to create BeanPostProcessor: " + beanInfo.getName() + ", " + beanInfo.getClazz());
         BeanPostProcessor o = (BeanPostProcessor) createBean(beanInfo);
-        infectParamBySetters(o, beanInfo);
-        log.debug("Created BeanPostProcessor: " + beanInfo.getName() + ", " + beanInfo.getClazz());
         beanPostProcessors.add(o);
     }
 
@@ -57,10 +54,7 @@ public class BeanFactory {
             return o;
         }
 
-        log.debug("Start to create bean: " + beanInfo.getName());
         o = createBean(beanInfo);
-        infectParamBySetters(o, beanInfo);
-        log.debug("Created bean: " + beanInfo.getName());
 
         beforeInitializationMethodInvoke(o, beanInfo.getName());
         invokeInitMethod(o);
@@ -70,6 +64,16 @@ public class BeanFactory {
             container.put(beanInfo.getName(), o);
         }
 
+        return o;
+    }
+
+    private Object createBean(BeanInfo beanInfo) {
+        beanInfo.startInitialized();
+        log.debug("Start to create bean: " + beanInfo.getName());
+        Object o = createInstance(beanInfo);
+        infectParamBySetters(o, beanInfo);
+        log.debug("Created bean: " + beanInfo.getName());
+        beanInfo.stopInitialized();
         return o;
     }
 
@@ -119,7 +123,7 @@ public class BeanFactory {
 
     }
 
-    private Object createBean(BeanInfo beanInfo) {
+    private Object createInstance(BeanInfo beanInfo) {
         try {
             Constructor<?> actualCons = getActualConstructor(beanInfo);
             List<AbstractInjectParam> constructorParams = beanInfo.getConstructorParams();

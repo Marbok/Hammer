@@ -1,6 +1,8 @@
 package beaninfo;
 
 import beaninfo.inject_param.AbstractInjectParam;
+import beaninfo.states.BeanInfoState;
+import beaninfo.states.WaitInit;
 import exceptions.BeanInfoException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +25,8 @@ public class BeanInfo {
     private Scope scope = SINGLETON;
     private List<AbstractInjectParam> constructorParams;
     private List<AbstractInjectParam> setterParams;
+
+    private BeanInfoState state = new WaitInit(this);
 
     public BeanInfo(BeanMeta beanMeta) {
         try {
@@ -52,5 +56,13 @@ public class BeanInfo {
             }
         }
         return injectParams;
+    }
+
+    public void startInitialized() {
+        state.startInitialization();
+    }
+
+    public void stopInitialized() {
+        state.stopInitialization();
     }
 }

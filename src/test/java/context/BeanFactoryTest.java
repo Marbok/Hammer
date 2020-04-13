@@ -1,5 +1,6 @@
 package context;
 
+import exceptions.CreateBeanException;
 import org.junit.jupiter.api.Test;
 import testHelpers.*;
 
@@ -81,9 +82,8 @@ class BeanFactoryTest {
         assertEquals(expected, actual);
     }
 
-//    @Test
-//    void testBeanPostProcessor() {
-//        BeanFactory beanFactory = new BeanFactory(new JsonContext("src/test/resources/bean_factory_test/initMethod.json"));
-//
-//    }
+    @Test
+    void testCycleDependency() {
+        assertThrows(CreateBeanException.class, () -> new BeanFactory(new JsonContext("src/test/resources/bean_factory_test/cycle_dependency.json")));
+    }
 }

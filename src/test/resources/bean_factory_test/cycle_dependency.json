@@ -1,0 +1,24 @@
+{
+  "beans": [
+    {
+      "class": "testHelpers.cycle.One",
+      "name": "one",
+      "constructor": [
+        {
+          "type": "testHelpers.cycle.Two",
+          "ref": "two"
+        }
+      ]
+    },
+    {
+      "class": "testHelpers.cycle.Two",
+      "name": "two",
+      "constructor": [
+        {
+          "type": "testHelpers.cycle.One",
+          "ref": "one"
+        }
+      ]
+    }
+  ]
+}
