@@ -5,7 +5,9 @@ import beaninfo.states.BeanInfoState;
 import beaninfo.states.WaitInit;
 import exceptions.BeanInfoException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import metadata.json.BeanMeta;
 import metadata.json.InjectMeta;
 import org.apache.commons.lang3.ClassUtils;
@@ -26,6 +28,8 @@ public class BeanInfo {
     private List<AbstractInjectParam> constructorParams;
     private List<AbstractInjectParam> setterParams;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private BeanInfoState state = new WaitInit(this);
 
     public BeanInfo(BeanMeta beanMeta) {
