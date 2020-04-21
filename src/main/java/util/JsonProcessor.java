@@ -7,17 +7,29 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * Encapsulate work with json file
+ */
 public class JsonProcessor {
 
-    private String fileName;
+    private final String path;
 
-    public JsonProcessor(String fileName) {
-        if (fileName == null) throw new IllegalArgumentException("File's name can't be null");
-        this.fileName = fileName;
+    /**
+     * @param path path to the json file, can't be null
+     */
+    public JsonProcessor(String path) {
+        if (path == null) throw new IllegalArgumentException("File's name can't be null");
+        this.path = path;
     }
 
+    /**
+     * Method to deserialize JSON content to the passed class
+     *
+     * @throws IOException if {@link JsonProcessor#path} have some problems.
+     *                     For instance, the file doesn't exist or has incompatible structure.
+     */
     public <T> T parse(Class<T> clazz) throws IOException {
-        String json = readJson(fileName);
+        String json = readJson(path);
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, clazz);
     }

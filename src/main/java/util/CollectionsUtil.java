@@ -2,16 +2,27 @@ package util;
 
 import java.util.Collection;
 
+/**
+ * Common methods for work with Collections
+ */
 public final class CollectionsUtil {
 
     private CollectionsUtil() {
     }
 
-    public static <T> boolean isEmpty(Collection<T> collection) {
+    /**
+     * @param collection any collection
+     * @return true, if the collection is null or empty
+     */
+    public static boolean isEmpty(Collection<?> collection) {
         return collection == null || collection.isEmpty();
     }
 
-    public static <T> boolean isNonEmpty(Collection<T> collection) {
+    /**
+     * @param collection any collection
+     * @return true, if the collection isn't null or empty
+     */
+    public static boolean isNonEmpty(Collection<?> collection) {
         return !isEmpty(collection);
     }
 }
