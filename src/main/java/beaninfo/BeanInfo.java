@@ -15,7 +15,6 @@ import util.CollectionsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static beaninfo.Scope.SINGLETON;
 
@@ -34,7 +33,7 @@ public class BeanInfo {
 
     public BeanInfo(BeanMeta beanMeta) {
         try {
-            name = beanMeta.getBeanName() != null ? beanMeta.getBeanName() : UUID.randomUUID().toString();
+            name = beanMeta.getBeanName() != null ? beanMeta.getBeanName() : beanMeta.getClassName();
             clazz = ClassUtils.getClass(beanMeta.getClassName());
             scope = beanMeta.getScope() == null ? SINGLETON : Scope.valueOf(beanMeta.getScope().toUpperCase());
             constructorParams = injectMetasToInjectParams(beanMeta.getConstructor());

@@ -24,7 +24,8 @@ public class BeanFactory {
 
     private final Context context;
     private final Map<String, Object> container = new HashMap<>();
-    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+    private final List<BeforeInitHandler> beforeInitHandlers = new ArrayList<>();
+    private final List<AfterInitHandler> afterInitHandlers = new ArrayList<>();
 
     public BeanFactory(Context context) {
         this.context = context;
@@ -33,19 +34,28 @@ public class BeanFactory {
 
         context.getAllBeanInfo()
                 .stream()
-                .filter(this::isBeanPostProcessor)
-                .forEach(this::initBeanPostProcessor);
+                .filter(beanInfo -> isImplementInterface(beanInfo, BeforeInitHandler.class))
+                .forEach(this::initBeforeInitHandler);
 
         context.getAllBeanInfo()
                 .stream()
-                .filter(this::isNotBeanPostProcessor)
+                .filter(beanInfo -> isImplementInterface(beanInfo, AfterInitHandler.class))
+                .forEach(this::initAfterInitHandler);
+
+        context.getAllBeanInfo()
+                .stream()
+                .filter(this::isSimpleBean)
                 .forEach(this::initBean);
     }
 
+    private void initAfterInitHandler(BeanInfo beanInfo) {
+        AfterInitHandler handler = (AfterInitHandler) createBean(beanInfo);
+        afterInitHandlers.add(handler);
+    }
 
-    private void initBeanPostProcessor(BeanInfo beanInfo) {
-        BeanPostProcessor o = (BeanPostProcessor) createBean(beanInfo);
-        beanPostProcessors.add(o);
+    private void initBeforeInitHandler(BeanInfo beanInfo) {
+        BeforeInitHandler o = (BeforeInitHandler) createBean(beanInfo);
+        beforeInitHandlers.add(o);
     }
 
     private Object initBean(BeanInfo beanInfo) {
@@ -78,8 +88,8 @@ public class BeanFactory {
     }
 
     private void beforeInitializationMethodInvoke(Object bean, String name) {
-        for (var beanPostProcessor : beanPostProcessors) {
-            bean = beanPostProcessor.beforeInitialization(bean, name);
+        for (var beanPostProcessor : beforeInitHandlers) {
+            bean = beanPostProcessor.handle(bean, name);
         }
     }
 
@@ -98,8 +108,8 @@ public class BeanFactory {
     }
 
     private void afterInitializationMethodInvoke(Object bean, String name) {
-        for (var beanPostProcessor : beanPostProcessors) {
-            bean = beanPostProcessor.afterInitialization(bean, name);
+        for (var handler : afterInitHandlers) {
+            bean = handler.handle(bean, name);
         }
     }
 
@@ -166,12 +176,13 @@ public class BeanFactory {
         }
     }
 
-    private boolean isBeanPostProcessor(BeanInfo beanInfo) {
-        return asList(beanInfo.getClazz().getInterfaces()).contains(BeanPostProcessor.class);
+    private boolean isImplementInterface(BeanInfo beanInfo, Class<?> clazz) {
+        return asList(beanInfo.getClazz().getInterfaces()).contains((clazz));
     }
 
-    private boolean isNotBeanPostProcessor(BeanInfo beanInfo) {
-        return !isBeanPostProcessor(beanInfo);
+    private boolean isSimpleBean(BeanInfo beanInfo) {
+        return !isImplementInterface(beanInfo, BeforeInitHandler.class) &&
+                !isImplementInterface(beanInfo, AfterInitHandler.class);
     }
 
     public Object getBean(String name) {

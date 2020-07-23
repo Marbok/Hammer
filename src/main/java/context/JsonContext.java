@@ -12,7 +12,7 @@ import java.util.*;
 
 public class JsonContext implements Context {
 
-    private Map<String, BeanInfo> beanInfos = new HashMap<>();
+    private final Map<String, BeanInfo> beanInfos = new HashMap<>();
 
     public JsonContext(String filePath) {
         if (StringUtils.isEmpty(filePath))
@@ -33,9 +33,10 @@ public class JsonContext implements Context {
                 }
                 if (CollectionsUtil.isNonEmpty(parse.getBeans())) {
                     parse.getBeans().forEach(bean -> {
-                        if (beanInfos.get(bean.getBeanName()) != null)
+                        if (beanInfos.get(bean.getBeanName()) != null && beanInfos.get(bean.getClassName()) != null)
                             throw new ContextException("Bean " + bean.getBeanName() + " in initialized twice");
-                        beanInfos.put(bean.getBeanName(), new BeanInfo(bean));
+                        BeanInfo beanInfo = new BeanInfo(bean);
+                        beanInfos.put(beanInfo.getName(), beanInfo);
                     });
                 }
             } catch (IOException e) {

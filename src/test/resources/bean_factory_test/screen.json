@@ -42,7 +42,10 @@
       ]
     },
     {
-      "class": "testHelpers.CalcScorePostProcessor"
+      "class": "testHelpers.CalcScoreBeforeInitHandler"
+    },
+    {
+      "class": "testHelpers.CalcScoreAfterInitHandler"
     }
   ]
 }

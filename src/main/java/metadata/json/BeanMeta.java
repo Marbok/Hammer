@@ -1,6 +1,7 @@
 package metadata.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import context.BeforeInitHandler;
 import lombok.Data;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class BeanMeta {
 
     /**
      * Name of bean. Use it when referring to a specific bean.
-     * This property is skipped for anonymous bean. For instance, {@link context.BeanPostProcessor}
+     * This property is skipped for anonymous bean. For instance, {@link BeforeInitHandler}
      */
     @JsonProperty("name")
     private String beanName;
