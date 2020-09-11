@@ -1,5 +1,12 @@
 package context;
 
 public interface ApplicationContext {
-    Object getBean(String beanName);
+
+    /**
+     * get bean by class
+     *
+     * @param clazz class of bean
+     * @return bean
+     */
+    <T> T getBean(Class<T> clazz);
 }
