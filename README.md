@@ -1,9 +1,12 @@
 # HammerDI
 
 ## Description
-Hammer is dependency injection framework, very light version Spring.
-But we have only DI and work with Json-context.
+Hammer is dependency injection framework, very light version Spring container.
 I develop it for education goals and don't recommend to use in production.
+
+v1. Work with Json-context. It was terrible idea!!! Huge context files and not intuitive.
+v2. It will be annotation
+
 
 ## Dashboard with tasks and bug
 Link: [Dashboard](https://trello.com/b/nxui2V3P/hammerdi)
