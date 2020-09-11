@@ -1,5 +1,6 @@
 package context;
 
+import annotations.InitMethod;
 import beaninfo.BeanInfo;
 import exceptions.CreateBeanException;
 import lombok.SneakyThrows;
@@ -11,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * Factory for getting beans
+ */
 public class BeanFactory {
 
     private Config config;
@@ -45,9 +49,24 @@ public class BeanFactory {
 
         bean = newInstanceBean(beanInfo);
         setterInject(bean, beanInfo);
+        initMethodInvoke(bean);
 
         container.put(beanInfo.getName(), bean);
         return bean;
+    }
+
+    private void initMethodInvoke(Object bean) {
+        Arrays.stream(bean.getClass()
+                .getMethods())
+                .filter(method -> method.isAnnotationPresent(InitMethod.class))
+                .findFirst()
+                .ifPresent(method -> {
+                    try {
+                        method.invoke(bean);
+                    } catch (Exception e) {
+                        throw new CreateBeanException("Can't invoke init maethod in " + bean.getClass().getName());
+                    }
+                });
     }
 
     /**
@@ -59,10 +78,7 @@ public class BeanFactory {
                 .forEach(method -> {
                     Class<?>[] parameterTypes = method.getParameterTypes();
                     Object[] paramValues = Arrays.stream(parameterTypes)
-                            .map(type -> {
-                                BeanInfo beanInfoParam = config.getBeanInfo(type);
-                                return createBean(beanInfoParam);
-                            })
+                            .map(type -> createBean(config.getBeanInfo(type)))
                             .toArray();
                     try {
                         method.invoke(bean, paramValues);
