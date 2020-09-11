@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static beaninfo.Scope.SINGLETON;
+
 /**
  * Factory for getting beans
  */
@@ -51,7 +53,9 @@ public class BeanFactory {
         setterInject(bean, beanInfo);
         initMethodInvoke(bean);
 
-        container.put(beanInfo.getName(), bean);
+        if (SINGLETON.equals(beanInfo.getScope())) {
+            container.put(beanInfo.getName(), bean);
+        }
         return bean;
     }
 
@@ -118,6 +122,6 @@ public class BeanFactory {
      */
     public Object getBean(Class<?> clazz) {
         BeanInfo beanInfo = config.getBeanInfo(clazz);
-        return container.get(beanInfo.getName());
+        return SINGLETON.equals(beanInfo.getScope()) ? container.get(beanInfo.getName()) : createBean(beanInfo);
     }
 }

@@ -3,6 +3,7 @@ package context;
 import annotations.Bean;
 import annotations.Inject;
 import beaninfo.BeanInfo;
+import beaninfo.Scope;
 import exceptions.BeanInfoException;
 import lombok.SneakyThrows;
 import org.reflections.Reflections;
@@ -13,6 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static beaninfo.Scope.SINGLETON;
 import static util.ClassUtil.haveDefaultConstructor;
 
 /**
@@ -40,25 +42,49 @@ public class AnnotationConfig implements Config {
      */
     @SneakyThrows
     private BeanInfo createBeanInfo(Class<?> clazz) {
-        BeanInfo info = new BeanInfo();
-        info.setClazz(clazz);
-        info.setName(clazz.getName());
+        return new BeanInfo()
+                .setClazz(clazz)
+                .setName(clazz.getName())
+                .setScope(getScope(clazz))
+                .setConstructor(getConstructor(clazz))
+                .setSetters(getSetters(clazz));
+    }
+
+    /**
+     * @param clazz bean's class
+     * @return bean's scope
+     */
+    private Scope getScope(Class<?> clazz) {
+        annotations.Scope scope = clazz.getAnnotation(annotations.Scope.class);
+        return scope == null ? SINGLETON : scope.value();
+    }
+
+    /**
+     * @param clazz bean's class
+     * @return setters for inject
+     */
+    private List<Method> getSetters(Class<?> clazz) {
+        return Stream.of(clazz.getMethods())
+                .filter(method -> method.isAnnotationPresent(Inject.class))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * @param clazz bean's class
+     * @return constructor for creating class
+     */
+    @SneakyThrows
+    private Constructor<?> getConstructor(Class<?> clazz) {
         List<Constructor<?>> annotatedConstructor = Arrays.stream(clazz.getConstructors())
                 .filter(constructor -> constructor.isAnnotationPresent(Inject.class))
                 .collect(Collectors.toList());
         if (annotatedConstructor.size() == 0 && haveDefaultConstructor(clazz)) {
-            info.setConstructor(clazz.getConstructor());
+            return clazz.getConstructor();
         } else if (annotatedConstructor.size() == 1) {
-            info.setConstructor(annotatedConstructor.get(0));
+            return annotatedConstructor.get(0);
         } else {
             throw new BeanInfoException("Can't find constructor in " + clazz);
         }
-
-        List<Method> setters = Stream.of(clazz.getMethods())
-                .filter(method -> method.isAnnotationPresent(Inject.class))
-                .collect(Collectors.toList());
-        info.setSetters(setters);
-        return info;
     }
 
     @Override

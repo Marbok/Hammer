@@ -10,5 +10,8 @@ public class Main {
         System.out.println(car.showFuel());
         car.drive();
         System.out.println(car.showFuel());
+
+        Turbo turbo = context.getBean(Turbo.class);
+        turbo.turbo();
     }
 }
